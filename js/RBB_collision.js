@@ -16,17 +16,18 @@ var context=main_window.getContext('2d');
 var width=main_window.width;
 var height=main_window.height;
 var friction=1;
+
+var test = new Bille(new Cercle(new Position(3*width/4, height/2), height/8), "#FF0000", "#FF2400");
+var test2 = new Bille(new Cercle(new Position(2*width/4, height/3), height/8), "#FF0000", "#FF2400", new Position(5, 10));
+
 var red = new player(0x51E77E,
-                     new avatar(3*width/4,height/2,height/8,"#FF0000","#FF2400"),
-                     new keys(0x25,0x27,0x26,0x28)
+                     new avatar(3*width/4,height/2,height/8,"#FF0000","#FF2400")
                     );
 var blue = new player(0xED1C7E,
-                      new avatar(width/4,height/2,height/8,"#0000FF","#0066FF"),
-                      new keys(0x51,0x44,0x5A,0x53)
+                      new avatar(width/4,height/2,height/8,"#0000FF","#0066FF")
                      );
 var black = new player(0xBADDAD,
-                       new avatar(width/2,height/2,height/4.5,"#000000","#505050"),
-                       new keys(0x00,0x00,0x00,0x00)
+                       new avatar(width/2,height/2,height/4.5,"#000000","#505050")
                       );
 var goal = {x:width-blue.avatar.radius,y:height/3,
             width:width-blue.avatar.radius/2,height:height/3};
@@ -36,8 +37,8 @@ var players = new Array(red,blue,black);
 //--------------------------//
 
 onmousemove = function(e){
-blue.avatar.x = e.clientX;
-blue.avatar.y = e.clientY
+test.cercle.position.x = e.clientX;
+test.cercle.position.y = e.clientY
 }
 
 function avatar(x,y,r,c,bc){
@@ -50,17 +51,10 @@ function avatar(x,y,r,c,bc){
   this.bordercolor=bc;
 }
 
-function keys(l,r,u,d){
-  this.left={code:l,hold:false};
-  this.right={code:r,hold:false};
-  this.up={code:u,hold:false};
-  this.down={code:d,hold:false};
-}
 
-function player(id, avatar, keys){
+function player(id, avatar){
   //this.id=id;
   this.avatar=avatar;
-  this.keys=keys;
   this.vitesse = new Position(0, 0);
   this.vitesse.x=0;
   this.vitesse.y=0;
@@ -68,20 +62,13 @@ function player(id, avatar, keys){
   this.updateFriction=updateFriction;
   function updateFriction(){ this.vitesse.x*=friction; this.vitesse.y*=friction; }
 
-  this.updateCommands=updateCommands;
-  function updateCommands(){ 
-    if(this.keys.left.hold){this.vitesse.x--;}
-    if(this.keys.right.hold){this.vitesse.x++;}
-    if(this.keys.up.hold){this.vitesse.y--;}
-    if(this.keys.down.hold){this.vitesse.y++;}
-  }
 
   this.updateCollisionBorder=updateCollisionBorder;
   function updateCollisionBorder(){ 
-    if (collisionLeftBorder(avatar)){ this.vitesse.x*=-1; this.avatar.x=this.avatar.radius; return true; }
-    if (collisionRightBorder(avatar)){ this.vitesse.x*=-1; this.avatar.x=width-this.avatar.radius; return true; }
-    if (collisionTopBorder(avatar)){ this.vitesse.y*=-1; this.avatar.y=this.avatar.radius; return true; }
-    if (collisionBottomBorder(avatar)){ this.vitesse.y*=-1; this.avatar.y=height-this.avatar.radius; return true; }
+    if (collisionLeftBorder(avatar)){ this.vitesse.x*=-1; this.avatar.x=this.avatar.radius;  }
+    if (collisionRightBorder(avatar)){ this.vitesse.x*=-1; this.avatar.x=width-this.avatar.radius;  }
+    if (collisionTopBorder(avatar)){ this.vitesse.y*=-1; this.avatar.y=this.avatar.radius;  }
+    if (collisionBottomBorder(avatar)){ this.vitesse.y*=-1; this.avatar.y=height-this.avatar.radius;  }
     return false;
   }
   
@@ -107,7 +94,10 @@ function player(id, avatar, keys){
       this.vitesse.y = ny*v2n +  gy*v1g;
       otherPlayer.vitesse.x = nx*v1n +  gx*v2g;
       otherPlayer.vitesse.y = ny*v1n +  gy*v2g;
- 
+      
+      otherPlayer.vitesse.x = this.vitesse.x;
+      otherPlayer.vitesse.y = this.vitesse.y;
+      
       otherPlayer.avatar.x = x1 + (r1+r2)*(x2-x1)/d;
       otherPlayer.avatar.y = y1 + (r1+r2)*(y2-y1)/d;
       return true;
@@ -155,37 +145,7 @@ function player(id, avatar, keys){
   }
 }
 
-document.onkeydown = function(event) {
-  var key_pressed;
-  if(event == null){
-    key_pressed = window.event.keyCode;
-  } else {
-    key_pressed = event.keyCode;
-  }
-  for (var i=0;i<players.length;i++) {
-    for (key in players[i].keys) {
-      if (key_pressed == players[i].keys[key].code){
-        players[i].keys[key].hold=true;
-      }
-    }
-  }
-}
- 
-document.onkeyup = function(event) {
-  var key_pressed;
-  if(event == null){
-    key_pressed = window.event.keyCode;
-  } else {
-    key_pressed = event.keyCode;
-  }
-  for (var i=0;i<players.length;i++) {
-    for (key in players[i].keys) {
-      if (key_pressed == players[i].keys[key].code){
-        players[i].keys[key].hold=false;
-      }
-    }
-  }
-}
+
 
 function on_enter_frame(){
   if(collisionCircleBox(blue.avatar,goal)){
@@ -198,7 +158,7 @@ function on_enter_frame(){
     var collisionCheck=false;
     for (var i=0;i<players.length;i++) {
       players[i].updateFriction();
-      players[i].updateCommands();
+      //players[i].updateCommands();
       collisionCheck|=players[i].updateCollisionBorder();
     }
 
@@ -210,6 +170,12 @@ function on_enter_frame(){
     context.clearRect(0,0,width,height);
     context.fillStyle=blue.avatar.color;
     context.fillRect(goal.x,goal.y,goal.width,goal.height);
+    
+    test.dessiner(context);
+    test2.updateCollisionBorder(width, height);
+    test2.updatePosition();
+    test2.dessiner(context);
+    test.updateCollisionSameMass(test2);
 
     for (var i=players.length-1;i>-1;i--) {
       players[i].updatePosition();
@@ -220,33 +186,4 @@ function on_enter_frame(){
   }
 }
 
-function frame_player(player){
-console.log(player.vitesse.x);
-for (var x = 1; x <= player.vitesse.x; ++x){
-player.avatar.x++;
-console.log(x);
-for (var y = 1; y <= player.vitesse.y; ++y){
-player.avatar.y++;
-console.log(x);
-  if(collisionCircleBox(blue.avatar,goal)){
-    onWin();
-    context.fillStyle=blue.avatar.color;
-    context.textAlign="center";
-    context.font="200px Arial";
-    context.fillText("Gagné!",width/2,height/2);
-  } else {
-    var collisionCheck=false;
-    for (var i=0;i<players.length;i++) {
-      players[i].updateFriction();
-      players[i].updateCommands();
-      collisionCheck|=players[i].updateCollisionBorder();
-    }
 
-    collisionCheck|=players[1].updateCollisionSameMass(players[0]);
-    collisionCheck|=players[1].updateCollisionInfiniteMass(players[2]);
-
-    if(collisionCheck){return;}
-  }
-  }
-  }
-}
