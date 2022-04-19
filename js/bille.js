@@ -18,35 +18,42 @@ function Bille(cercle, couleur, bordure, vitesse = new Position(0, 0)) {
 		return false;
 	}
 	
-	this.updateCollisionSameMass=updateCollisionSameMass;
-  function updateCollisionSameMass(bille){
-    if(collisionCercles(this.cercle, bille.cercle)){
-      var x1=this.cercle.position.x;
-      var y1=this.cercle.position.y;
-      var r1=this.cercle.rayon;
-      var x2=bille.cercle.position.x;
-      var y2=bille.cercle.position.y;
-      var r2=bille.cercle.rayon;
-      var d=Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-      var nx = (x2 - x1)/(r1+r2);
-      var ny = (y2 - y1)/(r1+r2);
-      var gx = -ny;
-      var gy = nx;
-      var v1n = nx*this.vitesse.x + ny*this.vitesse.y;
-      var v1g = gx*this.vitesse.x + gy*this.vitesse.y;
-      var v2n = nx*bille.vitesse.x + ny*bille.vitesse.y;
-      var v2g = gx*bille.vitesse.x + gy*bille.vitesse.y;
-      this.vitesse.x = nx*v2n +  gx*v1g;
-      this.vitesse.y = ny*v2n +  gy*v1g;
-      bille.vitesse.x = nx*v1n +  gx*v2g;
-      bille.vitesse.y = ny*v1n +  gy*v2g;
- 
-      bille.cercle.position.x = x1 + (r1+r2)*(x2-x1)/d;
-      bille.cercle.position.y = y1 + (r1+r2)*(y2-y1)/d;
-      return true;
+    this.updateCollisionSameMass = updateCollisionSameMass;
+    function updateCollisionSameMass(bille) {
+        if (collisionCercles(this.cercle, bille.cercle)) {
+            var x1 = this.cercle.position.x;
+            var y1 = this.cercle.position.y;
+            var r1 = this.cercle.rayon;
+            var x2 = bille.cercle.position.x;
+            var y2 = bille.cercle.position.y;
+            var r2 = bille.cercle.rayon;
+            var d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+            var nx = (x2 - x1) / (r1 + r2);
+            var ny = (y2 - y1) / (r1 + r2);
+            var gx = -ny;
+            var gy = nx;
+            var v1n = nx * this.vitesse.x + ny * this.vitesse.y;
+            var v1g = gx * this.vitesse.x + gy * this.vitesse.y;
+            var v2n = nx * bille.vitesse.x + ny * bille.vitesse.y;
+            var v2g = gx * bille.vitesse.x + gy * bille.vitesse.y;
+
+            this.vitesse.x = nx * v2n + gx * v1g;
+            this.vitesse.y = ny * v2n + gy * v1g;
+            bille.vitesse.x = nx * v1n + gx * v2g;
+            bille.vitesse.y = ny * v1n + gy * v2g;
+
+            this.updatePosition();
+            bille.updatePosition();
+
+            //bille.cercle.position.x = x1 + (r1 + r2) * (x2 - x1) / d;
+            //bille.cercle.position.y = y1 + (r1 + r2) * (y2 - y1) / d;
+            //this.cercle.position.x = x1 + (r1 + r2) * (x2 - x1) / d;
+            //this.cercle.position.y = y1 + (r1 + r2) * (y2 - y1) / d;
+
+            return true;
+        }
+        return false;
     }
-    return false;
-  }
   
   this.updateCollisionInfiniteMass=updateCollisionInfiniteMass;
   function updateCollisionInfiniteMass(bille){

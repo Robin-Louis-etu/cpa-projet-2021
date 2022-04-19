@@ -36,9 +36,33 @@ var players = new Array(red,blue,black);
 // END OF CONFIGURATIONS    //
 //--------------------------//
 
-onmousemove = function(e){
-test.cercle.position.x = e.clientX;
-test.cercle.position.y = e.clientY
+//onmousemove = function(e){
+//test.cercle.position.x = e.clientX;
+//test.cercle.position.y = e.clientY
+//}
+
+onmouseup = function (e) {
+    if (e.which === 1) {
+        test2.vitesse.x = 100 * (e.clientX - test2.cercle.position.x) / (e.clientX + test2.cercle.position.x);
+        test2.vitesse.y = 100 * (e.clientY - test2.cercle.position.y) / (e.clientY + test2.cercle.position.y);
+    } else if (e.which === 3) {
+        //test.vitesse.x = 100 * (e.clientX - test.cercle.position.x) / (e.clientX + test.cercle.position.x);
+        //test.vitesse.y = 100 * (e.clientY - test.cercle.position.y) / (e.clientY + test.cercle.position.y);
+    }
+}
+
+onmousedown = function (e) {
+    if (e.which === 1) {
+        test2.cercle.position.x = e.clientX;
+        test2.cercle.position.y = e.clientY
+        test2.vitesse.x = 0;
+        test2.vitesse.y = 0;
+    }else if (e.which === 3) {
+        test.cercle.position.x = e.clientX;
+        test.cercle.position.y = e.clientY
+        test.vitesse.x = 0;
+        test.vitesse.y = 0;
+    }
 }
 
 function avatar(x,y,r,c,bc){
@@ -171,12 +195,14 @@ function on_enter_frame(){
     context.fillStyle=blue.avatar.color;
     context.fillRect(goal.x,goal.y,goal.width,goal.height);
     
-    test.dessiner(context);
-    test2.updateCollisionBorder(width, height);
+      test.dessiner(context);
+      test2.updateCollisionBorder(width, height);
+      test.updateCollisionBorder(width, height);
+      test.updatePosition();
     test2.updatePosition();
     test2.dessiner(context);
     test.updateCollisionSameMass(test2);
-
+      test2.updateCollisionSameMass(test);
     for (var i=players.length-1;i>-1;i--) {
       players[i].updatePosition();
       //players[i].draw();
