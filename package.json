@@ -1,0 +1,30 @@
+{
+  "name": "cpa-projet-2021",
+  "version": "1.0.0",
+  "description": "Projet CPA 2021 - Master Informatique STL - Sorbonne Universite",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Robin-Louis-etu/cpa-projet-2021.git"
+  },
+  "keywords": [
+    "brick",
+    "breaker",
+    "game",
+    "student",
+    "project"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Robin-Louis-etu/cpa-projet-2021/issues"
+  },
+  "homepage": "https://github.com/Robin-Louis-etu/cpa-projet-2021#readme",
+  "dependencies": {
+    "live-server": "^1.2.1"
+  }
+}

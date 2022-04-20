@@ -1,18 +1,21 @@
-import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle } from "./collisions.js"
+import { BALLLIFE } from "./conf.js";
+import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle, collisionBallBrick } from "./collisions.js"
 import Position from "./position.js";
+import { GAMESTATE } from "./game.js";
 
-var friction=1;
 var width = main_window.width;
 var height = main_window.height;
 
 export default class {
-    constructor(p, r, c, bc, s, paddle) {
+    constructor(p, r, c, bc, s, game) {
         this.pos = p;
 	    this.radius = r;
         this.color = c;
         this.bordercolor = bc;
         this.speed = s;
-        this.paddle = paddle;
+        this.life = BALLLIFE;
+        this.game = game;
+        this.state = 0;
     }
 
     draw(ctx) {
@@ -26,10 +29,18 @@ export default class {
         ctx.closePath();
     }
 
+    go() {
+        if (this.game.gamestate === GAMESTATE.RUNNING && this.sate === 0) {
+            this.speed = new Position(5,-7);
+            this.sate = 1;
+        }
+    }
+
     update() {
         this.updateCollisionBorder();
         this.updatePosition();
         this.updateCollisionPaddle();
+        this.updateCollisionBrick();
     }
 
     updatePosition() {
@@ -102,11 +113,11 @@ export default class {
     }
 
     updateCollisionPaddle() {
-        switch (collisionBallPaddle(this, this.paddle)) {
+        switch (collisionBallPaddle(this, this.game.paddle)) {
             case 1:
-                this.speed.x = -9;
-                this.speed.y = -this.speed.y;
-                this.pos.y = this.paddle.pos.y - this.radius;
+                this.speed.x += -9;
+                this.speed.y *= -1;
+                this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 2:
                 // if (this.speed.x < 0) {
@@ -115,12 +126,12 @@ export default class {
                 //     this.speed.x += -6;
                 // }
                 this.speed.x += -6;
-                this.speed.y = -this.speed.y;
-                this.pos.y = this.paddle.pos.y - this.radius;
+                this.speed.y *= -1;
+                this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 3:
-                this.speed.y = -this.speed.y;
-                this.pos.y = this.paddle.pos.y - this.radius;
+                this.speed.y *= -1;
+                this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 4:
                 // if (this.speed.x > 0) {
@@ -129,18 +140,41 @@ export default class {
                 //     this.speed.x += 6;
                 // }
                 this.speed.x += 6;
-                this.speed.y = -this.speed.y;
-                this.pos.y = this.paddle.pos.y - this.radius;
+                this.speed.y *= -1;
+                this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 5:
-                this.speed.x = 9;
-                this.speed.y = -this.speed.y;
-                this.pos.y = this.paddle.pos.y - this.radius;
+                this.speed.x += 9;
+                this.speed.y *= -1;
+                this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
           }
     }
 
-    go() {
-        this.speed = new Position(5,-7);
+    updateCollisionBrick() {
+        this.game.bricks.forEach(brick => {
+            switch (collisionBallBrick(this, brick)) {
+                case 1:
+                    this.speed.y *= -1;
+                    this.pos.y = brick.pos.y - this.radius;
+                    brick.hp--;
+                    break;
+                case 2:
+                    this.speed.x *= -1;
+                    this.pos.x = brick.pos.x - this.radius;
+                    brick.hp--;
+                    break;
+                case 3:
+                    this.speed.y *= -1;
+                    this.pos.y = brick.pos.y + brick.height + this.radius;
+                    brick.hp--;
+                    break;
+                case 4:
+                    this.speed.x *= -1;
+                    this.pos.x = brick.pos.x + brick.width + this.radius;
+                    brick.hp--;
+                    break;
+            }
+        });
     }
 }

@@ -11,6 +11,8 @@ export default class {
     draw(ctx) {
         ctx.beginPath();
         switch (this.hp) {
+            // case 0:
+            //     return;
             case 1:
                 ctx.fillStyle = "orange";
                 break;
@@ -24,6 +26,7 @@ export default class {
                 break;
         }
         ctx.fillRect(this.pos.x, this.pos.y, this.width, this.height);
+        ctx.strokeRect(this.pos.x, this.pos.y, this.width, this.height);
         ctx.closePath();
     }
 }

@@ -18,26 +18,6 @@ export function collisionBalls(b1, b2){
     return Math.pow(b1.pos.x-b2.pos.x,2)+Math.pow(b1.pos.y-b2.pos.y,2) <= Math.pow(b1.radius + b2.radius,2);
 }
 
-export function collisionBallbrick(ball,brick){
-    let right = ball.pos.x + ball.radius;
-    let bottom = ball.pos.y + ball.radius;
-    let top = ball.pos.y - ball.radius;
-    let left = ball.pos.x - ball.radius;
-        
-    if(ball.pos.y >= brick.pos.y && ball.pos.y <= brick.pos.y+brick.pos.height){
-        return right >= brick.x && left <= brick.x+brick.width;
-    }
-        
-    if (ball.x >= brick.x && ball.x <= brick.x+brick.width){
-        return top <= brick.y+brick.height && bottom >= brick.y;
-    }
-        
-    return Math.pow(ball.x-brick.x,2)+Math.pow(ball.y-brick.y,2)<= ball.radius*ball.radius ||
-    Math.pow(ball.x-brick.x,2)+Math.pow(ball.y-(brick.y+brick.height),2)<= ball.radius*ball.radius ||
-    Math.pow(ball.x-(brick.x+brick.width),2)+Math.pow(ball.y-brick.y,2)<= ball.radius*ball.radius ||
-    Math.pow(ball.x-(brick.x+brick.width),2)+Math.pow(ball.y-(brick.y+brick.height),2)<= ball.radius*ball.radius;
-}
-
 export function collisionBallPaddle(ball, paddle) {
     let hitPosition = 0;
     let tmp = paddle.width / 6;
@@ -61,3 +41,61 @@ export function collisionBallPaddle(ball, paddle) {
         }
     }
 }
+
+export function collisionBallBrick(ball, brick) {
+    let bottomOfBall = ball.pos.y + ball.radius;
+    let topOfBall = ball.pos.y - ball.radius;
+    let leftSideOfBall = ball.pos.x - ball.radius;
+    let rightSideOfBall = ball.pos.x + ball.radius;
+
+    let topOfBrick = brick.pos.y;
+    let leftSideOfBrick = brick.pos.x;
+    let rightSideOfBrick = brick.pos.x + brick.width;
+    let bottomOfBrick = brick.pos.y + brick.height;
+
+    if (
+        bottomOfBall >= topOfBrick &&
+        topOfBall <= bottomOfBrick &&
+        rightSideOfBall >= leftSideOfBrick &&
+        leftSideOfBall <= rightSideOfBrick
+    ) {
+        if (
+            (ball.speed.x >= 0 &&
+            ball.speed.y > 0 &&
+            bottomOfBall - topOfBrick < rightSideOfBall - leftSideOfBrick) ||
+            (ball.speed.x <= 0 &&
+            ball.speed.y > 0 &&
+            bottomOfBall - topOfBrick < rightSideOfBrick - leftSideOfBall)
+        ) {
+            return 1;
+        } else if (
+            (ball.speed.x > 0 &&
+            ball.speed.y <= 0 &&
+            bottomOfBrick - topOfBall > rightSideOfBall - leftSideOfBrick) ||
+            (ball.speed.x > 0 &&
+            ball.speed.y >= 0 &&
+            bottomOfBall - topOfBrick > rightSideOfBall - leftSideOfBrick)
+        ) {
+            return 2;
+        } else if (
+            (ball.speed.x >= 0 &&
+            ball.speed.y < 0 &&
+            bottomOfBrick - topOfBall < rightSideOfBall - leftSideOfBrick) ||
+            (ball.speed.x <= 0 &&
+            ball.speed.y < 0 &&
+            bottomOfBrick - topOfBall < rightSideOfBrick - leftSideOfBall)
+        ) {
+            return 3;
+        } else if (
+            (ball.speed.x < 0 &&
+            ball.speed.y >= 0 &&
+            bottomOfBall - topOfBrick > rightSideOfBrick - leftSideOfBall) ||
+            (ball.speed.x < 0 &&
+            ball.speed.y <= 0 &&
+            bottomOfBrick - topOfBall > rightSideOfBrick - leftSideOfBall)
+        ) {
+            return 4;
+        }
+    }
+  }
+  
