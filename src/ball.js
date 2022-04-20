@@ -1,5 +1,5 @@
 import { BALLLIFE } from "./conf.js";
-import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle, collisionBallBrick } from "./collisions.js"
+import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle, collisionBallBrick, noCollisionBallPaddle } from "./collisions.js"
 import Position from "./position.js";
 import { GAMESTATE } from "./game.js";
 
@@ -110,6 +110,13 @@ export default class {
           return true;
         }
         return false;
+    }
+
+    updateNoCollisionPaddle() {
+        if (noCollisionBallPaddle(this, this.game.paddle)) {
+            this.life--;
+            this.pos = new Position(this.paddle.pos.x + this.paddle.width/2, this.paddle.pos.y - 10);
+        }
     }
 
     updateCollisionPaddle() {

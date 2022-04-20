@@ -1,5 +1,6 @@
 import Brick from "./brick.js";
 import Position from "./position.js";
+import { BRICK_HEIGHT, BRICK_WIDTH } from "./conf.js";
 
 export function buildLevel(level) {
     let bricks = [];
@@ -9,17 +10,17 @@ export function buildLevel(level) {
             let position;
             switch (brick) {
                 case 1:
-                    position = new Position(80 * brickIndex, 75 + 24 * rowIndex);
+                    position = new Position(BRICK_WIDTH * brickIndex, 24 + BRICK_HEIGHT * rowIndex);
                     bricks.push(new Brick(position, 1));
                     break;
 
                 case 2:
-                    position = new Position(80 * brickIndex, 75 + 24 * rowIndex);
+                    position = new Position(BRICK_WIDTH * brickIndex, 24 + BRICK_HEIGHT * rowIndex);
                     bricks.push(new Brick(position, 2));
                     break;
 
                 case 3:
-                    position = new Position(80 * brickIndex, 75 + 24 * rowIndex);
+                    position = new Position(BRICK_WIDTH * brickIndex, 24 + BRICK_HEIGHT * rowIndex);
                     bricks.push(new Brick(position, 3));
                     break;
             }
