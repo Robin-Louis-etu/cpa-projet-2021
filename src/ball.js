@@ -30,9 +30,9 @@ export default class {
     }
 
     go() {
-        if (this.game.gamestate === GAMESTATE.RUNNING && this.sate === 0) {
+        if (this.game.gamestate === GAMESTATE.RUNNING && this.state === 0) {
             this.speed = new Position(5,-7);
-            this.sate = 1;
+            this.state = 1;
         }
     }
 

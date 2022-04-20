@@ -4,15 +4,12 @@ var ctx = main_window.getContext('2d');
 var width = main_window.width;
 var height = main_window.height;
 
-// ------ GAME CONFIGURATION ------
-
 var game = new Game();
 
-// --- Inputs ---
+// ------ INPUT CONFIGURATION ------
 document.addEventListener("keydown", event => {
     switch (event.keyCode) {
         case 32:
-            console.log(game.gamestate);
             game.ball.go();
             break;
     
@@ -21,13 +18,16 @@ document.addEventListener("keydown", event => {
             game.start();
             break;
     }
-})
+});
+
 document.addEventListener("mousemove", event => {
     if (game.gamestate === GAMESTATE.RUNNING){
         game.paddle.pos.x = event.clientX - game.paddle.width/2 - 10;
-        game.ball.pos.x = game.paddle.pos.x + game.paddle.width/2;
+        if (game.ball.state === 0) {
+            game.ball.pos.x = game.paddle.pos.x + game.paddle.width/2;
+        }
     }
-})
+});
 
 // ------------------------------
 

@@ -69,7 +69,7 @@ export default class {
         ctx.fill();
     
         ctx.font = "30px Arial";
-        ctx.fillStyle = "Black";
+        ctx.fillStyle = "black";
         ctx.textAlign = "center";
         ctx.fillText("Paused", this.gameWidth / 2, this.gameHeight / 2);
         }
