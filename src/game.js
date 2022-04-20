@@ -10,17 +10,28 @@ var friction = 1;
 
 // ------ GAME CONFIGURATION ------
 const paddle = new Paddle();
-const ball = new Ball(new Position(paddle.pos.x + paddle.width/2, paddle.pos.y - 10), 8, "red", "#FF2400", new Position(7,-2));
+const ball = new Ball(new Position(paddle.pos.x + paddle.width/2, paddle.pos.y - 10), 8, "red", "#FF2400", new Position(0,0), paddle);
 var bricks = [
     new Brick(new Position(0, 0), 1),
     new Brick(new Position(50, 40), 2),
     new Brick(new Position(100, 100), 3),
 ]
 
+var state = 1;
+
 onmousemove = event => {
     paddle.pos.x = event.clientX - paddle.width/2 - 10;
-    ball.pos.x = paddle.pos.x + paddle.width/2;
+    if (state === 1){
+        ball.pos.x = paddle.pos.x + paddle.width/2;
+    }
 };
+
+onclick = () => {
+    if (state === 1) {
+        ball.go();
+        state = 2;
+    }
+}
 
 // ------------------------------
 
@@ -33,9 +44,8 @@ function draw() {
 }
 
 function update() {
-    paddle.updateCollisionBorder();
-    ball.updateCollisionBorder();
-    // ball.updatePosition();
+    paddle.update();
+    ball.update();
 }
 
 function loop() {

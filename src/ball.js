@@ -1,16 +1,18 @@
-import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder } from "./collisions.js"
+import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle } from "./collisions.js"
+import Position from "./position.js";
 
 var friction=1;
 var width = main_window.width;
 var height = main_window.height;
 
 export default class {
-    constructor(p, r, c, bc, s) {
+    constructor(p, r, c, bc, s, paddle) {
         this.pos = p;
 	    this.radius = r;
         this.color = c;
         this.bordercolor = bc;
         this.speed = s;
+        this.paddle = paddle;
     }
 
     draw(ctx) {
@@ -24,6 +26,12 @@ export default class {
         ctx.closePath();
     }
 
+    update() {
+        this.updateCollisionBorder();
+        this.updatePosition();
+        this.updateCollisionPaddle();
+    }
+
     updatePosition() {
         this.pos.x += this.speed.x; 
         this.pos.y += this.speed.y;
@@ -35,14 +43,14 @@ export default class {
     }
 
     updateCollisionBorder(){ 
-        if (collisionLeftBorder(this)){ this.speed.x*=-1; this.pos.x=this.radius;  }
-        if (collisionRightBorder(this)){ this.speed.x*=-1; this.pos.x=width-this.radius;  }
-        if (collisionTopBorder(this)){ this.speed.y*=-1; this.pos.y=this.radius;  }
-        if (collisionBottomBorder(this)){ this.speed.y*=-1; this.pos.y=height-this.radius;  }
+        if (collisionLeftBorder(this)){ this.speed.x*=-1; this.pos.x=this.radius; return true; }
+        if (collisionRightBorder(this)){ this.speed.x*=-1; this.pos.x=width-this.radius; return true; }
+        if (collisionTopBorder(this)){ this.speed.y*=-1; this.pos.y=this.radius; return true; }
+        if (collisionBottomBorder(this)){ this.speed.y*=-1; this.pos.y=height-this.radius; return true; }
         return false;
     }
 
-    updateCollisionSameMass(ball){
+    updateCollisionSameMass(ball) {
         if(collisionBalls(this, ball)){
           var x1=this.pos.x;
           var y1=this.pos.y;
@@ -71,7 +79,7 @@ export default class {
         return false;
     }
 
-    updateCollisionInfiniteMass(ball){
+    updateCollisionInfiniteMass(ball) {
         if(collisionBalls(this, ball)){
           var x1=ball.pos.x;
           var y1=ball.pos.y;
@@ -91,5 +99,48 @@ export default class {
           return true;
         }
         return false;
+    }
+
+    updateCollisionPaddle() {
+        switch (collisionBallPaddle(this, this.paddle)) {
+            case 1:
+                this.speed.x = -9;
+                this.speed.y = -this.speed.y;
+                this.pos.y = this.paddle.pos.y - this.radius;
+                break;
+            case 2:
+                // if (this.speed.x < 0) {
+                //     this.speed.x = -6;
+                // } else {
+                //     this.speed.x += -6;
+                // }
+                this.speed.x += -6;
+                this.speed.y = -this.speed.y;
+                this.pos.y = this.paddle.pos.y - this.radius;
+                break;
+            case 3:
+                this.speed.y = -this.speed.y;
+                this.pos.y = this.paddle.pos.y - this.radius;
+                break;
+            case 4:
+                // if (this.speed.x > 0) {
+                //     this.speed.x = 6;
+                // } else {
+                //     this.speed.x += 6;
+                // }
+                this.speed.x += 6;
+                this.speed.y = -this.speed.y;
+                this.pos.y = this.paddle.pos.y - this.radius;
+                break;
+            case 5:
+                this.speed.x = 9;
+                this.speed.y = -this.speed.y;
+                this.pos.y = this.paddle.pos.y - this.radius;
+                break;
+          }
+    }
+
+    go() {
+        this.speed = new Position(5,-7);
     }
 }

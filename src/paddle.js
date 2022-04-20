@@ -19,6 +19,10 @@ export default class {
         ctx.closePath();
     }
 
+    update() {
+        this.updateCollisionBorder();
+    }
+
     updateCollisionBorder() {
         if (this.pos.x < 0) {
             this.pos.x = 0;

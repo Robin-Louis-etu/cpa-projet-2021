@@ -39,5 +39,25 @@ export function collisionBallbrick(ball,brick){
 }
 
 export function collisionBallPaddle(ball, paddle) {
-    
+    let hitPosition = 0;
+    let tmp = paddle.width / 6;
+
+    if (
+        ball.pos.y + ball.radius >= paddle.pos.y &&
+        ball.pos.x + ball.radius >= paddle.pos.x &&
+        ball.pos.x - ball.radius <= paddle.pos.x + paddle.width
+    ) {
+        hitPosition = ball.pos.x - paddle.pos.x;
+        if (hitPosition <= tmp) {
+        return 1;
+        } else if (hitPosition > tmp && hitPosition <= tmp * 2) {
+        return 2;
+        } else if ((hitPosition > tmp * 2 && hitPosition <= tmp * 3) || (hitPosition > tmp * 3 && hitPosition <= tmp * 4)) {
+        return 3;
+        } else if (hitPosition > tmp * 4 && hitPosition <= tmp * 5) {
+        return 4;
+        } else if (hitPosition >= tmp * 5) {
+        return 5;
+        }
+    }
 }
