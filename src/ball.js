@@ -6,6 +6,10 @@ import { GAMESTATE } from "./game.js";
 var width = main_window.width;
 var height = main_window.height;
 
+const G = 0.;
+const F = 1;
+const P = -1;
+
 export default class {
     constructor(p, r, c, bc, s, game) {
         this.pos = p;
@@ -44,6 +48,9 @@ export default class {
         var x = Math.abs(this.pos.x);
         var y = Math.abs(this.pos.y);
 
+
+        var collision = false;
+
         do {
 
 
@@ -65,7 +72,7 @@ export default class {
             if (collisionLeftBorder(this)) { this.speed.x *= -1; /*this.pos.x=this.radius; return true;*/ }
             if (collisionRightBorder(this)) { this.speed.x *= -1; /*this.pos.x=width-this.radius; return true;*/ }
 
-            this.updateCollisionBrickX()
+            collision = collision || this.updateCollisionBrickX()
 
 
             //this.updateCollisionBorder();
@@ -94,7 +101,7 @@ export default class {
             if (collisionTopBorder(this)) { this.speed.y *= -1; /*this.pos.y=this.radius; return true;*/ }
             if (collisionBottomBorder(this)) { this.speed.y *= -1; /*this.pos.y=height-this.radius; return true;*/ }
 
-            this.updateCollisionBrickY()
+            collision = collision || this.updateCollisionBrickY()
 
 
             //this.updateCollisionBorder();
@@ -104,10 +111,14 @@ export default class {
 
         } while (vy > 0);
 
-        this.updateCollisionBrickXY();
-        //this.updateCollisionBrick();
-                    this.updateCollisionPaddle();
+        if (!collision) this.updateCollisionBrickXY();
 
+        //this.updateCollisionBrick();
+        this.updateCollisionPaddle();
+
+        this.speed.y += G;
+        this.speed.y *= F;
+        this.speed.x *= F;
     }
 
     updatePosition() {
@@ -188,7 +199,11 @@ export default class {
         var r2 = this.radius;
         var d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
+        this.speed.x *= -1;
+        this.speed.y *= -1;
+        return;
 
+        alert("angle");
         console.log("x1 " + this.speed.x);
         console.log("y1 " + this.speed.y);
 
@@ -231,7 +246,7 @@ export default class {
         switch (collisionBallPaddle(this, this.game.paddle)) {
             case 1:
                 this.speed.x += -9;
-                this.speed.y *= -1;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 2:
@@ -241,11 +256,11 @@ export default class {
                 //     this.speed.x += -6;
                 // }
                 this.speed.x += -6;
-                this.speed.y *= -1;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 3:
-                this.speed.y *= -1;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 4:
@@ -255,12 +270,12 @@ export default class {
                 //     this.speed.x += 6;
                 // }
                 this.speed.x += 6;
-                this.speed.y *= -1;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 5:
                 this.speed.x += 9;
-                this.speed.y *= -1;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
           }
@@ -360,6 +375,8 @@ export default class {
                     break;
             }
         });
+
+        return left || right || bottom || top;
     }
 
 
@@ -390,6 +407,8 @@ export default class {
                     break;
             }
         });
+
+        return left || right || bottom || top;
     }
 
     updateCollisionBrickXY() {
@@ -429,6 +448,8 @@ export default class {
                     break;
             }
         });
+
+        return left || right || bottom || top;
     }
 
 }

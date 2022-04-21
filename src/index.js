@@ -24,19 +24,33 @@ document.addEventListener("keydown", event => {
     }
 });
 
-document.addEventListener("mousemove", event => {
-    // if (game.gamestate === GAMESTATE.RUNNING){
-    //     game.paddle.pos.x = event.clientX - game.paddle.width/2 - 10;
-    //     if (game.ball.state === 0) {
-    //         game.ball.pos.x = game.paddle.pos.x + game.paddle.width/2;
-    //     }
-    // }
+var mouseControl = false;
 
-    // Pour tester les collisions :
-    game.ball.pos.x = event.clientX - game.ball.radius;
-    game.ball.pos.y = event.clientY - game.ball.radius;
-    game.ball.speed.x = 0.000001;
-    game.ball.speed.y = 0.000001;
+document.addEventListener("mousemove", event => {
+    if (mouseControl) {
+        // Pour tester les collisions :
+        game.ball.pos.x = event.clientX - game.ball.radius;
+        game.ball.pos.y = event.clientY - game.ball.radius;
+        game.ball.speed.x = 0.1;
+        game.ball.speed.y = 0.1;
+    }
+    else {
+        if (game.gamestate === GAMESTATE.RUNNING) {
+            game.paddle.pos.x = event.clientX - game.paddle.width / 2 - 10;
+            if (game.ball.state == 0) {
+                game.ball.state = 1;
+                game.ball.pos.x = game.paddle.pos.x + game.paddle.width / 2;
+            }
+        }
+    }
+});
+
+document.addEventListener("mousedown", event => {
+    //if (mouseControl) {
+    //    game.ball.pos.x = game.paddle.pos.x + game.paddle.width / 2;
+    //}
+
+    mouseControl = !mouseControl;
 });
 
 // ------------------------------
