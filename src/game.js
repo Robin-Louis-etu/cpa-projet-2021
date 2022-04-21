@@ -4,6 +4,9 @@ import Ball from "./ball.js";
 import Paddle from "./paddle.js";
 import Brick from "./brick.js";
 
+var width = main_window.width;
+var height = main_window.height;
+
 export const GAMESTATE = {
     PAUSED: 0,
     RUNNING: 1,
@@ -35,7 +38,7 @@ export default class {
     }
 
     update() {
-        // if (this.lives === 0) this.gamestate = GAMESTATE.GAMEOVER;
+        // if (!this.balls.length) this.gamestate = GAMESTATE.GAMEOVER;
     
         if (
             this.gamestate === GAMESTATE.PAUSED ||
@@ -64,14 +67,14 @@ export default class {
         [...this.gameObjects, ...this.bricks].forEach(object => object.draw(ctx));
     
         if (this.gamestate === GAMESTATE.PAUSED) {
-        ctx.rect(0, 0, this.gameWidth, this.gameHeight);
+        ctx.rect(0, 0, width, height);
         ctx.fillStyle = "rgba(0,0,0,0.5)";
         ctx.fill();
     
         ctx.font = "30px Arial";
         ctx.fillStyle = "black";
         ctx.textAlign = "center";
-        ctx.fillText("Paused", this.gameWidth / 2, this.gameHeight / 2);
+        ctx.fillText("Paused", width / 2, height / 2);
         }
     
         // if (this.gamestate === GAMESTATE.MENU) {

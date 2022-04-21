@@ -46,6 +46,13 @@ export function collisionBallPaddle(ball, paddle) {
     }
 }
 
+export function noCollisionBallPaddle(ball, paddle) {
+    return ball.pos.y + ball.radius > paddle.pos.y && (
+        ball.pos.x + ball.radius < paddle.pos.x ||
+        ball.pos.x - ball.radius > paddle.pos.x + paddle.width
+    );
+}
+
 export function collisionBallBrick(ball, brick) {
     let bottomOfBall = ball.pos.y + ball.radius;
     let topOfBall = ball.pos.y - ball.radius;
@@ -90,6 +97,9 @@ export function collisionBallBrick(ball, brick) {
             ball.speed.y > 0 &&
             bottomOfBall - topOfBrick < rightSideOfBrick - leftSideOfBall)
         ) {
+            console.log(`Collision avec la brique => x : ${brick.pos.x}
+            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
+            collisionBallBrick : 1`);
             return 1;
         } else if (
             (ball.speed.x > 0 &&
@@ -99,6 +109,9 @@ export function collisionBallBrick(ball, brick) {
             ball.speed.y >= 0 &&
             bottomOfBall - topOfBrick > rightSideOfBall - leftSideOfBrick)
         ) {
+            console.log(`Collision avec la brique => x : ${brick.pos.x}
+            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
+            collisionBallBrick : 2`);
             return 2;
         } else if (
             (ball.speed.x >= 0 &&
@@ -108,6 +121,9 @@ export function collisionBallBrick(ball, brick) {
             ball.speed.y < 0 &&
             bottomOfBrick - topOfBall < rightSideOfBrick - leftSideOfBall)
         ) {
+            console.log(`Collision avec la brique => x : ${brick.pos.x}
+            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
+            collisionBallBrick : 3`);
             return 3;
         } else if (
             (ball.speed.x < 0 &&
@@ -117,6 +133,9 @@ export function collisionBallBrick(ball, brick) {
             ball.speed.y <= 0 &&
             bottomOfBrick - topOfBall > rightSideOfBrick - leftSideOfBall)
         ) {
+            console.log(`Collision avec la brique => x : ${brick.pos.x}
+            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
+            collisionBallBrick : 4`);
             return 4;
         }
     }

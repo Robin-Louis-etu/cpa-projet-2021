@@ -1,10 +1,10 @@
-var width = main_window.width;
+import { BRICK_HEIGHT, BRICK_WIDTH } from "./conf.js";
 
 export default class {
     constructor(p, hp) {
         this.pos = p;
-        this.width = width / 10;
-        this.height = 30;
+        this.width = BRICK_WIDTH;
+        this.height = BRICK_HEIGHT;
         this.hp = hp;
     }
 
