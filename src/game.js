@@ -57,7 +57,7 @@ export default class {
         this.gameObjects.forEach(object =>
             object.update()
         );
-        this.bricks = this.bricks.filter(brick => brick.hp !== 0);
+        this.bricks = this.bricks.filter(brick => brick.hp > 0);
     }
 
     draw(ctx) {

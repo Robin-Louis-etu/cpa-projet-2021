@@ -18,6 +18,10 @@ export function collisionBalls(b1, b2){
     return Math.pow(b1.pos.x-b2.pos.x,2)+Math.pow(b1.pos.y-b2.pos.y,2) <= Math.pow(b1.radius + b2.radius,2);
 }
 
+export function collisionBallPoint(b1, x, y) {
+    return Math.pow(b1.pos.x - x, 2) + Math.pow(b1.pos.y - y, 2) <= Math.pow(b1.radius, 2);
+}
+
 export function collisionBallPaddle(ball, paddle) {
     let hitPosition = 0;
     let tmp = paddle.width / 6;
@@ -52,6 +56,25 @@ export function collisionBallBrick(ball, brick) {
     let leftSideOfBrick = brick.pos.x;
     let rightSideOfBrick = brick.pos.x + brick.width;
     let bottomOfBrick = brick.pos.y + brick.height;
+
+    if (collisionBallPoint(ball, leftSideOfBrick, topOfBrick)) {
+        return 5;
+    } else if (collisionBallPoint(ball, rightSideOfBrick, topOfBrick)) {
+        return 6;
+    } else if (collisionBallPoint(ball, leftSideOfBrick, bottomOfBrick)) {
+        return 7;
+    } else if (collisionBallPoint(ball, rightSideOfBrick, bottomOfBrick)) {
+        return 8;
+    } else if (ball.speed.x > 0 && bottomOfBall >= topOfBrick && topOfBall <= bottomOfBrick && ball.pos.x <= rightSideOfBrick && ball.pos.x >= leftSideOfBrick) {
+        return 1;
+    } else if (ball.speed.x < 0 && bottomOfBall >= topOfBrick && topOfBall <= bottomOfBrick && ball.pos.x <= rightSideOfBrick && ball.pos.x >= leftSideOfBrick) {
+        return 3;
+    } else if (ball.speed.y > 0 && leftSideOfBall <= rightSideOfBrick && rightSideOfBall >= leftSideOfBrick && ball.pos.y >= topOfBrick && ball.pos.y <= bottomOfBrick) {
+        return 2;
+    } else if (ball.speed.y < 0 && leftSideOfBall <= rightSideOfBrick && rightSideOfBall >= leftSideOfBrick && ball.pos.y >= topOfBrick && ball.pos.y <= bottomOfBrick) {
+        return 4;
+    }
+    return
 
     if (
         bottomOfBall >= topOfBrick &&
