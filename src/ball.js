@@ -74,6 +74,8 @@ export default class {
 
             collision = collision || this.updateCollisionBrickX()
 
+            if (!collision) this.updateCollisionBrickXY();
+
 
             //this.updateCollisionBorder();
             //this.updatePosition();
@@ -103,6 +105,8 @@ export default class {
 
             collision = collision || this.updateCollisionBrickY()
 
+            if (!collision) this.updateCollisionBrickXY();
+
 
             //this.updateCollisionBorder();
             //this.updatePosition();
@@ -111,7 +115,7 @@ export default class {
 
         } while (vy > 0);
 
-        if (!collision) this.updateCollisionBrickXY();
+        //if (!collision) this.updateCollisionBrickXY();
 
         //this.updateCollisionBrick();
         this.updateCollisionPaddle();
@@ -199,34 +203,35 @@ export default class {
         var r2 = this.radius;
         var d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
-        this.speed.x *= -1;
-        this.speed.y *= -1;
-        return;
+        //this.speed.x *= -1;
+        //this.speed.y *= -1;
+        //return;
 
-        alert("angle");
         console.log("x1 " + this.speed.x);
         console.log("y1 " + this.speed.y);
 
 
-        //var nx = (x2 - x1) / (r1 + r2);
-        //var ny = (y2 - y1) / (r1 + r2);
-        //var pthis = this.speed.x * nx + this.speed.y * ny;
-        //this.speed.x = this.speed.x - 2 *pthis * nx;
-        //this.speed.y = this.speed.y - 2 * pthis * ny;
+        var nx = (x2 - x1) / (r1 + r2);
+        var ny = (y2 - y1) / (r1 + r2);
+        var pthis = this.speed.x * nx + this.speed.y * ny;
+        this.speed.x = this.speed.x - 2 *pthis * nx;
+        this.speed.y = this.speed.y - 2 * pthis * ny;
 
+        //this.pos.x = x1 + (r1 + r2) * (x2 - x1) / d;
+        //this.pos.y = y1 + (r1 + r2) * (y2 - y1) / d;
 
-        var nx = ((x2 - x1) / (r1 + r2));
-        var ny = ((y2 - y1) / (r1 + r2));
-        var pthis = (this.speed.x * ((x2 - x1) / (r1 + r2)) + this.speed.y * ((y2 - y1) / (r1 + r2)));
+        this.updatePosition();
 
-        this.speed.x = this.speed.x - 2 * pthis * ((x2 - x1) / (r1 + r2));
-        this.speed.y = this.speed.y - 2 * pthis * ((y2 - y1) / (r1 + r2));
+        //var nx = ((x2 - x1) / (r1 + r2));
+        //var ny = ((y2 - y1) / (r1 + r2));
+        //var pthis = (this.speed.x * ((x2 - x1) / (r1 + r2)) + this.speed.y * ((y2 - y1) / (r1 + r2)));
+
+        //this.speed.x = this.speed.x - 2 * pthis * ((x2 - x1) / (r1 + r2));
+        //this.speed.y = this.speed.y - 2 * pthis * ((y2 - y1) / (r1 + r2));
 
         //this.speed.x = this.speed.x - 2 * ((this.speed.x * (x2 - x1) + this.speed.y * (y2 - y1)) * (x2 - x1)) / ((r1 + r2) * (r1 + r2));
         //this.speed.y = this.speed.y - 2 * ((this.speed.x * (x2 - x1) + this.speed.y * (y2 - y1)) * (y2 - y1)) / ((r1 + r2) * (r1 + r2));
 
-        //this.pos.x = x1 + (r1 + r2) * (x2 - x1) / d;
-        //this.pos.y = y1 + (r1 + r2) * (y2 - y1) / d;
 
         console.log("x2 " + this.speed.x);
         console.log("y2 " + this.speed.y);
