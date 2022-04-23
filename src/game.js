@@ -25,6 +25,16 @@ export default class {
         this.bricks = [];
         this.levels = [level1, level2];
         this.currentLevel = 0;
+
+        this.matrix = new Array(width);
+
+        for (var x = 0; x < width; ++x) {
+            this.matrix[x] = new Array(height);
+            for (var y = 0; y < height; ++y) {
+                this.matrix[x][y] = [];
+            }
+        }
+
     }
 
     start() {
@@ -35,6 +45,14 @@ export default class {
         this.gameObjects = [this.ball, this.paddle];
     
         this.gamestate = GAMESTATE.RUNNING;
+
+        this.bricks.forEach(brick => {
+            for (var x = brick.pos.x; x < brick.pos.x + brick.width; ++x) {
+                for (var y = brick.pos.y; y < brick.pos.y + brick.height; ++y) {
+                    this.matrix[x][y].push(brick);
+                }
+            }
+        });
     }
 
     update() {
