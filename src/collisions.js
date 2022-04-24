@@ -81,64 +81,6 @@ export function collisionBallBrick(ball, brick) {
     } else if (ball.speed.x < 0 && leftSideOfBall <= rightSideOfBrick && rightSideOfBall >= leftSideOfBrick && ball.pos.y >= topOfBrick && ball.pos.y <= bottomOfBrick) {
         return 4;
     }
-    return
-
-    if (
-        bottomOfBall >= topOfBrick &&
-        topOfBall <= bottomOfBrick &&
-        rightSideOfBall >= leftSideOfBrick &&
-        leftSideOfBall <= rightSideOfBrick
-    ) {
-        if (
-            (ball.speed.x >= 0 &&
-            ball.speed.y > 0 &&
-            bottomOfBall - topOfBrick < rightSideOfBall - leftSideOfBrick) ||
-            (ball.speed.x <= 0 &&
-            ball.speed.y > 0 &&
-            bottomOfBall - topOfBrick < rightSideOfBrick - leftSideOfBall)
-        ) {
-            console.log(`Collision avec la brique => x : ${brick.pos.x}
-            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
-            collisionBallBrick : 1`);
-            return 1;
-        } else if (
-            (ball.speed.x > 0 &&
-            ball.speed.y <= 0 &&
-            bottomOfBrick - topOfBall > rightSideOfBall - leftSideOfBrick) ||
-            (ball.speed.x > 0 &&
-            ball.speed.y >= 0 &&
-            bottomOfBall - topOfBrick > rightSideOfBall - leftSideOfBrick)
-        ) {
-            console.log(`Collision avec la brique => x : ${brick.pos.x}
-            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
-            collisionBallBrick : 2`);
-            return 2;
-        } else if (
-            (ball.speed.x >= 0 &&
-            ball.speed.y < 0 &&
-            bottomOfBrick - topOfBall < rightSideOfBall - leftSideOfBrick) ||
-            (ball.speed.x <= 0 &&
-            ball.speed.y < 0 &&
-            bottomOfBrick - topOfBall < rightSideOfBrick - leftSideOfBall)
-        ) {
-            console.log(`Collision avec la brique => x : ${brick.pos.x}
-            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
-            collisionBallBrick : 3`);
-            return 3;
-        } else if (
-            (ball.speed.x < 0 &&
-            ball.speed.y >= 0 &&
-            bottomOfBall - topOfBrick > rightSideOfBrick - leftSideOfBall) ||
-            (ball.speed.x < 0 &&
-            ball.speed.y <= 0 &&
-            bottomOfBrick - topOfBall > rightSideOfBrick - leftSideOfBall)
-        ) {
-            console.log(`Collision avec la brique => x : ${brick.pos.x}
-            , y : ${brick.pos.y} avec comme valeur de retour de la fonction
-            collisionBallBrick : 4`);
-            return 4;
-        }
-    }
   }
 
 
@@ -155,8 +97,6 @@ export function collisionBallBrickLeftBorder(ball, brick) {
 }
 
 export function collisionBallBrickRightBorder(ball, brick) {
-    let bottomOfBall = ball.pos.y + ball.radius;
-    let topOfBall = ball.pos.y - ball.radius;
     let leftSideOfBall = ball.pos.x - ball.radius;
     let rightSideOfBall = ball.pos.x + ball.radius;
 
@@ -197,11 +137,6 @@ export function collisionBallBrickBottomBorder(ball, brick) {
 }
 
 export function collisionBallBrickAngle(ball, brick) {
-    let bottomOfBall = ball.pos.y + ball.radius;
-    let topOfBall = ball.pos.y - ball.radius;
-    let leftSideOfBall = ball.pos.x - ball.radius;
-    let rightSideOfBall = ball.pos.x + ball.radius;
-
     let topOfBrick = brick.pos.y;
     let leftSideOfBrick = brick.pos.x;
     let rightSideOfBrick = brick.pos.x + brick.width;

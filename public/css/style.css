@@ -1,3 +1,21 @@
+:root {
+    --main_window-width: 900px;
+}
+
 #main_window {
     border: 2px solid black;
+    padding: 0;
+    margin: auto;
+    display: block;
+}
+
+.sliders {
+    margin: auto;
+    width: var(--main_window-width);
+    display: flex;
+    justify-content: center;
+}
+
+label, input {
+    margin: 1em;
 }

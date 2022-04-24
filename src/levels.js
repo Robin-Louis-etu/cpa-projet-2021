@@ -8,21 +8,29 @@ export function buildLevel(level) {
     level.forEach((row, rowIndex) => {
         row.forEach((brick, brickIndex) => {
             let position;
+            if (brickIndex === 0) {
+                if (rowIndex === 0) {
+                    position = new Position(1, 24);
+                } else {
+                    position = new Position(1, 24 + BRICK_HEIGHT * rowIndex + rowIndex);
+                }
+            } else if (rowIndex === 0) {
+                position = new Position(BRICK_WIDTH * brickIndex + brickIndex, 24);
+            } else {
+                position = new Position(BRICK_WIDTH * brickIndex + brickIndex, 24 + BRICK_HEIGHT * rowIndex +  rowIndex);
+            }
             switch (brick) {
                 case 1:
-                    position = new Position(BRICK_WIDTH * brickIndex, 24 + BRICK_HEIGHT * rowIndex);
-                    bricks.push(new Brick(position, 1));
+                    bricks.push(new Brick(position, 1, 0));
                     break;
-
                 case 2:
-                    position = new Position(BRICK_WIDTH * brickIndex, 24 + BRICK_HEIGHT * rowIndex);
-                    bricks.push(new Brick(position, 2));
+                    bricks.push(new Brick(position, 2, 0));
                     break;
-
                 case 3:
-                    position = new Position(BRICK_WIDTH * brickIndex, 24 + BRICK_HEIGHT * rowIndex);
-                    bricks.push(new Brick(position, 3));
+                    bricks.push(new Brick(position, 3, 0));
                     break;
+                case 4:
+                    bricks.push(new Brick(position, 1, 1));
             }
         });
     });
@@ -30,22 +38,22 @@ export function buildLevel(level) {
 }
 
 export const level1 = [
-    [0, 3, 3, 3, 3, 3, 3, 3, 3, 0],
-    [0, 3, 3, 3, 3, 3, 3, 3, 3, 0],
-    [0, 2, 2, 2, 2, 2, 2, 2, 2, 0],
-    [0, 2, 2, 2, 2, 2, 2, 2, 2, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+    [2, 2, 4, 2, 2, 2, 2, 4, 2, 2],
+    [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
   
 export const level2 = [
-    [3, 0, 0, 2, 2, 2, 2, 0, 0, 3],
+    [4, 0, 0, 2, 2, 2, 2, 0, 0, 4],
     [1, 3, 0, 0, 2, 2, 0, 0, 3, 1],
     [1, 1, 3, 0, 0, 0, 0, 3, 1, 1],
     [1, 1, 1, 3, 0, 0, 3, 1, 1, 1],
-    [1, 1, 1, 3, 0, 0, 3, 1, 1, 1],
+    [1, 1, 1, 4, 0, 0, 4, 1, 1, 1],
     [1, 1, 1, 3, 0, 0, 3, 1, 1, 1],
     [1, 1, 3, 0, 0, 0, 0, 3, 1, 1],
     [1, 3, 0, 0, 2, 2, 0, 0, 3, 1],
-    [3, 0, 0, 2, 2, 2, 2, 0, 0, 3]
+    [4, 0, 0, 2, 2, 2, 2, 0, 0, 4]
 ];

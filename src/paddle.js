@@ -8,8 +8,7 @@ export default class {
     constructor() {
         this.width = PADDLE_WIDTH;
         this.height = PADLLE_HEIGHT;
-        this.pos = new Position(width/2 - this.width/2,height - this.height - PADDLE_BOTTOM_MARGIN);
-        this.speed = 0;
+        this.reset();
     }
 
     draw(ctx) {
@@ -17,15 +16,6 @@ export default class {
         ctx.fillStyle = "darkcyan";
         ctx.fillRect(this.pos.x, this.pos.y, this.width, this.height);
         ctx.strokeRect(this.pos.x, this.pos.y, this.width, this.height);
-
-        // Afficher les zones du paddle :
-        // let tmp = this.width / 6;
-        // ctx.strokeRect(this.pos.x, this.pos.y, tmp, this.height);
-        // ctx.strokeRect(this.pos.x + tmp, this.pos.y, tmp, this.height);
-        // ctx.strokeRect(this.pos.x + tmp * 2, this.pos.y, tmp * 2, this.height);
-        // ctx.strokeRect(this.pos.x + tmp * 4, this.pos.y, tmp, this.height);
-        // ctx.strokeRect(this.pos.x + tmp * 5, this.pos.y, tmp, this.height);
-
         ctx.closePath();
     }
 
@@ -36,5 +26,9 @@ export default class {
         if (this.pos.x + this.width > width) {
             this.pos.x = width - this.width;
         }
+    }
+
+    reset() {
+        this.pos = new Position(width/2 - this.width/2,height - this.height - PADDLE_BOTTOM_MARGIN);
     }
 }
