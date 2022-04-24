@@ -149,7 +149,8 @@ export default class {
                     }
 
                     if (collisionBottomBorder(this)) {
-                        this.speed.y *= -1;
+                        this.life--;
+                        this.reset();
                     }
                     else {
                         if (!this.updateCollisionBrickBottom()) {
