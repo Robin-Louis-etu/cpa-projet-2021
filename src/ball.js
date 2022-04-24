@@ -50,7 +50,7 @@ export default class {
 
     go() {
         if (this.game.gamestate === GAMESTATE.RUNNING && this.state === 0) {
-            this.speed = new Position(5,-7);
+            this.speed = new Position(5,-5);
             this.state = 1;
         }
     }
