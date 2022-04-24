@@ -21,15 +21,32 @@ export default class {
         this.bricks = [];
         this.levels = [level1, level2];
         this.currentLevel = 0;
+
+        this.matrix = new Array(width);
+
+        for (var x = 0; x < width; ++x) {
+            this.matrix[x] = new Array(height);
+            for (var y = 0; y < height; ++y) {
+                this.matrix[x][y] = [];
+            }
+        }
+
     }
 
     start() {
         this.bricks = buildLevel(this.levels[this.currentLevel]);
         this.balls = [new Ball(BALL_RADIUS, "red", "#FF2400", BALL_LIFE, this)];
+        this.bricks.forEach(brick => {
+            for (var x = brick.pos.x; x < brick.pos.x + brick.width; ++x) {
+                for (var y = brick.pos.y; y < brick.pos.y + brick.height; ++y) {
+                    this.matrix[x][y].push(brick);
+                }
+            }
+        });
     }
 
     reset() {
-        if (this.gamestate === GAMESTATE.GAMEOVER || this.gamestate === GAMESTATE.YOUWIN) {
+        if (this.gamestate === GAMESTATE.GAMEOVER || this.gamestate === GAMESTATE.YOUWIN) {    
             this.gamestate = GAMESTATE.RUNNING;
             this.paddle.reset();
             this.currentLevel = 0;

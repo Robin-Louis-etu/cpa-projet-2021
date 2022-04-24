@@ -1,9 +1,25 @@
-import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle, collisionBallBrick, /*noCollisionBallPaddle,*/ collisionBalls } from "./collisions.js"
+import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle, collisionBallBrick, noCollisionBallPaddle, collisionBalls, collisionBallBrickLeftBorder, collisionBallBrickRightBorder, collisionBallBrickTopBorder, collisionBallBrickBottomBorder } from "./collisions.js"
 import Position from "./position.js";
 import { GAMESTATE } from "./game.js";
 import { BALL_RADIUS } from "./conf.js";
 
 var width = main_window.width;
+
+var G = 0.;
+var F = 1;
+var P = 1.;
+
+document.getElementById("G").oninput = e => {
+    G = parseFloat(e.target.value);
+}
+
+document.getElementById("F").oninput = e => {
+    F = parseFloat(e.target.value);
+}
+
+document.getElementById("P").oninput = e => {
+    P = parseFloat(e.target.value);
+}
 
 export default class {
     constructor(r, c, bc, l, game) {
@@ -16,7 +32,7 @@ export default class {
     }
 
     reset() {
-        this.pos = new Position(this.game.paddle.pos.x + this.game.paddle.width/2, this.game.paddle.pos.y - 10);
+        this.pos = new Position(this.game.paddle.pos.x + this.game.paddle.width/2, this.game.paddle.pos.y - BALL_RADIUS);
         this.speed = new Position(0, 0);
         this.state = 0;
     }
@@ -40,23 +56,163 @@ export default class {
     }
 
     update() {
-        this.updateCollisionBorder();
-        this.updatePosition();
-        this.updateCollisionPaddle();
-        this.updateCollisionBrick();
+        var vx = Math.abs(this.speed.x);
+        var vy = Math.abs(this.speed.y);
+
+
+        var x = Math.floor(this.pos.x);
+        var y = Math.floor(this.pos.y);
+
+
+        var collision = false;
+        var angle = false;
+
+        let c = true;
+
+        do {
+            if (c) {
+
+
+                if (this.pos.x + this.speed.x >= x + 1) {
+                    if (this.speed.x < 1) {
+                        vx = 0;
+                        x++;
+                        this.pos.x += this.speed.x;
+                    }
+                    else {
+                        vx--;
+                        x++;
+                        this.pos.x++;
+                    }
+
+                    if (collisionRightBorder(this)) {
+                        this.speed.x *= -1;
+                    }
+                    else {
+                        if (!this.updateCollisionBrickRight()) {
+                            if (!angle) angle = angle || this.updateCollisionBrickXY();
+                        }
+                    }
+
+                }
+                else if (this.pos.x + this.speed.x < x) {
+                    if (this.speed.x > -1) {
+                        vx = 0;
+                        x--;
+                        this.pos.x += this.speed.x;
+                    }
+                    else {
+                        vx--;
+                        x--;
+                        this.pos.x--;
+                    }
+
+                    if (collisionLeftBorder(this)) {
+                        this.speed.x *= -1;
+                    }
+                    else {
+                        if (!this.updateCollisionBrickLeft()) {
+                            if (!angle) angle = angle || this.updateCollisionBrickXY();
+                        }
+                    }
+
+                } else {
+                    vx = 0;
+                    this.pos.x += this.speed.x;
+                }
+
+
+
+
+
+
+                //this.updateCollisionBorder();
+                //this.updatePosition();
+                //this.updateCollisionPaddle();
+                //this.updateCollisionBrick();
+
+            }
+
+            else {
+
+
+                if (this.pos.y + this.speed.y >= y + 1) {
+                    if (this.speed.y < 1) {
+                        vy = 0;
+                        y++;
+                        this.pos.y += this.speed.y;
+                    }
+                    else {
+                        vy--;
+                        y++;
+                        this.pos.y++;
+                    }
+
+                    if (collisionBottomBorder(this)) {
+                        this.speed.y *= -1;
+                    }
+                    else {
+                        if (!this.updateCollisionBrickBottom()) {
+                            if (!angle) angle = angle || this.updateCollisionBrickXY();
+                        }
+                    }
+                }
+                else if (this.pos.y + this.speed.y < y) {
+                    if (this.speed.y > -1) {
+                        vy = 0;
+                        y--;
+                        this.pos.y += this.speed.y;
+                    }
+                    else {
+                        vy--;
+                        y--;
+                        this.pos.y--;
+                    }
+
+                    if (collisionTopBorder(this)) {
+                        this.speed.y *= -1;
+                    }
+                    else {
+                        if (!this.updateCollisionBrickTop()) {
+                            if (!angle) angle = angle || this.updateCollisionBrickXY();
+                        }
+                    }
+
+                } else {
+                    vy = 0;
+                    this.pos.y += this.speed.y;
+
+                }
+
+
+
+
+
+                //this.updateCollisionBorder();
+                //this.updatePosition();
+                //this.updateCollisionPaddle();
+                //this.updateCollisionBrick();
+
+            }
+
+            c = !c;
+        } while (vx > 0 || vy > 0)
+        //if (!collision) this.updateCollisionBrickXY();
+
+        //this.updateCollisionBrick();
         // this.updateNoCollisionPaddle();
         this.updateCollisionSameMass();
+        this.updateCollisionPaddle();
+
+        this.speed.y *= F;
+        this.speed.y += G;
+        this.speed.x *= F;
     }
 
     updatePosition() {
         this.pos.x += this.speed.x; 
         this.pos.y += this.speed.y;
     }
-
-    // updateFriction(){
-    //     this.speed.x *= friction;
-    //     this.speed.y *= friction;
-    // }
 
     updateCollisionBorder(){ 
         if (collisionLeftBorder(this)){ this.speed.x*=-1; this.pos.x=this.radius; }
@@ -97,22 +253,78 @@ export default class {
         });
     }
 
-    updateCollisionInfiniteMass(object) {
-        var x1=object.x;
-        var y1=object.y;
-        var r1=0;
-        var x2=this.pos.x;
-        var y2=this.pos.y;
-        var r2=this.radius;
-        var d=Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2));
-        var nx = (x2-x1)/(r1+r2);
-        var ny = (y2-y1)/(r1+r2);
-        var pthis = this.speed.x * nx + this.speed.y * ny;
-        this.speed.x = - 2 * pthis * nx;
-        this.speed.y = - 2 * pthis * ny;
+    // updateCollisionInfiniteMass(object) {
+    //     var x1=object.x;
+    //     var y1=object.y;
+    //     var r1=0;
+    //     var x2=this.pos.x;
+    //     var y2=this.pos.y;
+    //     var r2=this.radius;
+    //     var d=Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2));
+    //     var nx = (x2-x1)/(r1+r2);
+    //     var ny = (y2-y1)/(r1+r2);
+    //     var pthis = this.speed.x * nx + this.speed.y * ny;
+    //     this.speed.x = - 2 * pthis * nx;
+    //     this.speed.y = - 2 * pthis * ny;
     
-        this.pos.x = x1 + (r1+r2) * (x2-x1) / d;
-        this.pos.y = y1 + (r1+r2) * (y2-y1) / d;
+    //     this.pos.x = x1 + (r1+r2) * (x2-x1) / d;
+    //     this.pos.y = y1 + (r1+r2) * (y2-y1) / d;
+    // }
+
+    updateCollisionPointInfiniteMass(x, y) {
+        var x1 = x;
+        var y1 = y;
+        var r1 = 0;
+        var x2 = this.pos.x;
+        var y2 = this.pos.y;
+        var r2 = this.radius;
+        var d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+
+        //this.speed.x *= -1;
+        //this.speed.y *= -1;
+        //return;
+
+        //console.log("x1 " + this.speed.x);
+        //console.log("y1 " + this.speed.y);
+
+
+        var nx = (x2 - x1) / (r1 + r2);
+        var ny = (y2 - y1) / (r1 + r2);
+        var pthis = this.speed.x * nx + this.speed.y * ny;
+        this.speed.x = this.speed.x - 2 *pthis * nx;
+        this.speed.y = this.speed.y - 2 * pthis * ny;
+
+
+
+
+
+        //this.speed.x *= -1;
+        //this.speed.y *= -1;
+
+        //this.pos.x = x1 + (r1 + r2) * (x2 - x1) / d;
+        //this.pos.y = y1 + (r1 + r2) * (y2 - y1) / d;
+
+        //this.updatePosition();
+
+        //var nx = ((x2 - x1) / (r1 + r2));
+        //var ny = ((y2 - y1) / (r1 + r2));
+        //var pthis = (this.speed.x * ((x2 - x1) / (r1 + r2)) + this.speed.y * ((y2 - y1) / (r1 + r2)));
+
+        //this.speed.x = this.speed.x - 2 * pthis * ((x2 - x1) / (r1 + r2));
+        //this.speed.y = this.speed.y - 2 * pthis * ((y2 - y1) / (r1 + r2));
+
+        //this.speed.x = this.speed.x - 2 * ((this.speed.x * (x2 - x1) + this.speed.y * (y2 - y1)) * (x2 - x1)) / ((r1 + r2) * (r1 + r2));
+        //this.speed.y = this.speed.y - 2 * ((this.speed.x * (x2 - x1) + this.speed.y * (y2 - y1)) * (y2 - y1)) / ((r1 + r2) * (r1 + r2));
+
+
+        //console.log("x2 " + this.speed.x);
+        //console.log("y2 " + this.speed.y);
+
+        console.log("/ANGLE");
+        console.log("ANGLE/");
+
+
+        return true;
     }
 
     // updateNoCollisionPaddle() {
@@ -129,6 +341,8 @@ export default class {
             case 1:
                 this.speed.x = -9;
                 this.speed.y *= -1;
+
+                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 2:
@@ -138,10 +352,14 @@ export default class {
                     this.speed.x += -6;
                 }
                 this.speed.y *= -1;
+
+                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 3:
                 this.speed.y *= -1;
+
+                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 4:
@@ -151,86 +369,211 @@ export default class {
                     this.speed.x += 6;
                 }
                 this.speed.y *= -1;
+
+                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 5:
                 this.speed.x = 9;
                 this.speed.y *= -1;
+                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
-          }
+        }
     }
 
-    updateCollisionBrick() {
-        let collisionAngle = false;
+    // updateCollisionBrick() {
+    //     let collisionAngle = false;
+    //     let top = false;
+    //     let bottom = false;
+    //     let left = false;
+    //     let right = false;
+    //     this.game.bricks.forEach(brick => {
+    //         switch (collisionBallBrick(this, brick)) {
+    //             case 1: // collision avec le haut de la brique
+    //                 if (!top) {
+    //                     this.speed.y *= -1;
+    //                     this.pos.y = brick.pos.y - this.radius;
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 top = true;
+    //                 break;
+    //             case 2: // collision avec le bas de la brique
+    //                 if (!bottom) {
+    //                     this.speed.y *= -1;
+    //                     this.pos.y = brick.pos.y + brick.height + this.radius;
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 bottom = true;
+    //                 break;
+    //             case 3: // collision avec le cote gauche de la brique
+    //                 if (!left) {
+    //                     this.speed.x *= -1;
+    //                     this.pos.x = brick.pos.x - this.radius;
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 left = true;
+    //                 break;
+    //             case 4: // collision avec le cote droit de la brique
+    //                 if (!right) {
+    //                     this.speed.x *= -1;
+    //                     this.pos.x = brick.pos.x + brick.width + this.radius;
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 right = true;
+    //                 break;
+    //             case 5: // collision avec l'angle en haut à gauche de la brique
+    //                 if (!collisionAngle) {
+    //                     this.updateCollisionInfiniteMass({x: brick.pos.x, y: brick.pos.y,});
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 collisionAngle = true;
+    //                 break;
+    //             case 6: // collision avec l'angle en haut à droite de la brique
+    //                 if (!collisionAngle) {
+    //                     this.updateCollisionInfiniteMass({x: brick.pos.x + brick.width, y: brick.pos.y});
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 collisionAngle = true;
+    //                 break;
+    //             case 7: // collision avec l'angle en bas à gauche de la brique
+    //                 if (!collisionAngle) {
+    //                     this.updateCollisionInfiniteMass({x: brick.pos.x, y: brick.pos.y + brick.height});
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 collisionAngle = true;
+    //                 break;
+    //             case 8: // collision avec l'angle en bas à droite de la brique
+    //                 if (!collisionAngle) {
+    //                     this.updateCollisionInfiniteMass({x: brick.pos.x + brick.width, y: brick.pos.y + brick.height});
+    //                     this.updateBrick(brick);
+    //                 }
+    //                 collisionAngle = true;
+    //                 break;
+    //         }
+    //     }
+    // }
+
+    updateCollisionBrickRight() {
+        var x = Math.floor(this.pos.x + this.radius) + 1;
+        var y = Math.round(this.pos.y);
+
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickRightBorder(this, brick)) {
+                    this.speed.x *= -1;
+                    this.updateBrick(brick);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    updateCollisionBrickLeft() {
+        var x = Math.floor(this.pos.x - this.radius) - 1;
+        var y = Math.round(this.pos.y);
+
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickLeftBorder(this, brick)) {
+                    this.speed.x *= -1;
+                    this.updateBrick(brick);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    updateCollisionBrickTop() {
+        var x = Math.round(this.pos.x);
+        var y = Math.floor(this.pos.y - this.radius) - 1;
+
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickTopBorder(this, brick)) {
+                    this.speed.y *= -1;
+                    this.updateBrick(brick);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    updateCollisionBrickBottom() {
+        var x = Math.round(this.pos.x);
+        var y = Math.floor(this.pos.y + this.radius) + 1;
+
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickBottomBorder(this, brick)) {
+                    this.speed.y *= -1;
+                    this.updateBrick(brick);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    updateCollisionBrickXY() {
+        let bottomOfBall = Math.floor(this.pos.y + this.radius) + 1;
+        let topOfBall = Math.floor(this.pos.y - this.radius);
+        let leftSideOfBall = Math.floor(this.pos.x - this.radius);
+        let rightSideOfBall = Math.floor(this.pos.x + this.radius) + 1;
+
         let top = false;
         let bottom = false;
         let left = false;
         let right = false;
-        this.game.bricks.forEach(brick => {
-            switch (collisionBallBrick(this, brick)) {
-                case 1: // collision avec le haut de la brique
-                    if (!top) {
-                        this.speed.y *= -1;
-                        this.pos.y = brick.pos.y - this.radius;
-                        this.updateBrick(brick);
+
+        for (var x = leftSideOfBall; x < rightSideOfBall; ++x) {
+            for (var y = topOfBall; y < bottomOfBall; ++y) {
+                if (this.game.matrix[x] && this.game.matrix[x][y])
+                    for (var brick of this.game.matrix[x][y]) {
+                        if (brick.hp > 0) {
+                            let topOfBrick = brick.pos.y;
+                            let leftSideOfBrick = brick.pos.x;
+                            let rightSideOfBrick = brick.pos.x + brick.width;
+                            let bottomOfBrick = brick.pos.y + brick.height;
+
+                            switch (collisionBallBrick(this, brick)) {
+                                case 5:
+                                    if (!left && !top) this.updateCollisionPointInfiniteMass(leftSideOfBrick, topOfBrick);
+                                    left = true;
+                                    top = true;
+                                    this.updateBrick(brick);
+                                    return;
+                                case 6:
+                                    if (!right && !top) this.updateCollisionPointInfiniteMass(rightSideOfBrick, topOfBrick);
+                                    right = true;
+                                    top = true;
+                                    this.updateBrick(brick);
+                                    return;
+                                case 7:
+                                    if (!left && !bottom) this.updateCollisionPointInfiniteMass(leftSideOfBrick, bottomOfBrick);
+                                    left = true;
+                                    bottom = true;
+                                    this.updateBrick(brick);
+                                    return;
+                                case 8:
+                                    if (!right && !bottom) this.updateCollisionPointInfiniteMass(rightSideOfBrick, bottomOfBrick);
+                                    right = true;
+                                    bottom = true;
+                                    this.updateBrick(brick);
+                                    return;
+                            }
+                        }
                     }
-                    top = true;
-                    break;
-                case 2: // collision avec le bas de la brique
-                    if (!bottom) {
-                        this.speed.y *= -1;
-                        this.pos.y = brick.pos.y + brick.height + this.radius;
-                        this.updateBrick(brick);
-                    }
-                    bottom = true;
-                    break;
-                case 3: // collision avec le cote gauche de la brique
-                    if (!left) {
-                        this.speed.x *= -1;
-                        this.pos.x = brick.pos.x - this.radius;
-                        this.updateBrick(brick);
-                    }
-                    left = true;
-                    break;
-                case 4: // collision avec le cote droit de la brique
-                    if (!right) {
-                        this.speed.x *= -1;
-                        this.pos.x = brick.pos.x + brick.width + this.radius;
-                        this.updateBrick(brick);
-                    }
-                    right = true;
-                    break;
-                case 5: // collision avec l'angle en haut à gauche de la brique
-                    if (!collisionAngle) {
-                        this.updateCollisionInfiniteMass({x: brick.pos.x, y: brick.pos.y,});
-                        this.updateBrick(brick);
-                    }
-                    collisionAngle = true;
-                    break;
-                case 6: // collision avec l'angle en haut à droite de la brique
-                    if (!collisionAngle) {
-                        this.updateCollisionInfiniteMass({x: brick.pos.x + brick.width, y: brick.pos.y});
-                        this.updateBrick(brick);
-                    }
-                    collisionAngle = true;
-                    break;
-                case 7: // collision avec l'angle en bas à gauche de la brique
-                    if (!collisionAngle) {
-                        this.updateCollisionInfiniteMass({x: brick.pos.x, y: brick.pos.y + brick.height});
-                        this.updateBrick(brick);
-                    }
-                    collisionAngle = true;
-                    break;
-                case 8: // collision avec l'angle en bas à droite de la brique
-                    if (!collisionAngle) {
-                        this.updateCollisionInfiniteMass({x: brick.pos.x + brick.width, y: brick.pos.y + brick.height});
-                        this.updateBrick(brick);
-                    }
-                    collisionAngle = true;
-                    break;
             }
-        });
+        }
+        return left || right || bottom || top;
     }
 
     updateBrick(brick) {
