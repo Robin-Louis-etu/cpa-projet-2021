@@ -47,8 +47,6 @@ document.addEventListener("mousemove", event => {
                 }
                 if (game.balls[0].state === 0) {
                     game.balls[0].pos.x = game.paddle.pos.x + game.paddle.width / 2;
-                    console.log(`Balle : x = ${game.balls[0].pos.x} y : ${game.balls[0].pos.y}`);
-                    console.log(`Paddle : x = ${game.paddle.pos.x} y = ${game.paddle.pos.y}`);
                 }
             }
         }
