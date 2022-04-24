@@ -19,7 +19,7 @@ export function collisionBalls(b1, b2){
 }
 
 export function collisionBallPoint(b1, x, y) {
-    return Math.pow(Math.floor(b1.pos.x) - x, 2) + Math.pow(Math.floor(b1.pos.y) - y, 2) < Math.pow(b1.radius, 2);
+    return Math.pow(b1.pos.x - x, 2) + Math.pow(b1.pos.y - y, 2) < Math.pow(b1.radius, 2);
 }
 
 export function collisionBallPaddle(ball, paddle) {
