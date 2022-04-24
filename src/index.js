@@ -14,7 +14,7 @@ document.addEventListener("keydown", event => {
         case 32:
             // game.ball.go();
             // Pour tester les collisions :
-            game.ball.speed = new Position(0,-5);
+            game.ball.speed.y -= 5;
             break;
     
         case 13:
@@ -31,8 +31,8 @@ document.addEventListener("mousemove", event => {
         // Pour tester les collisions :
         game.ball.pos.x = event.clientX - game.ball.radius;
         game.ball.pos.y = event.clientY - game.ball.radius;
-        game.ball.speed.x = 0.1;
-        game.ball.speed.y = 0.1;
+        game.ball.speed.x = 0.;
+        game.ball.speed.y = 0.5;
     }
     else {
         if (game.gamestate === GAMESTATE.RUNNING) {

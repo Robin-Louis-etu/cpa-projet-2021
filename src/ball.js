@@ -1,5 +1,5 @@
 import { BALLLIFE } from "./conf.js";
-import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle, collisionBallBrick, noCollisionBallPaddle, collisionBallBrickLeftBorder, collisionBallBrickRightBorder } from "./collisions.js"
+import { collisionBottomBorder, collisionLeftBorder, collisionRightBorder, collisionTopBorder, collisionBallPaddle, collisionBallBrick, noCollisionBallPaddle, collisionBallBrickLeftBorder, collisionBallBrickRightBorder, collisionBallBrickTopBorder, collisionBallBrickBottomBorder } from "./collisions.js"
 import Position from "./position.js";
 import { GAMESTATE } from "./game.js";
 
@@ -68,7 +68,7 @@ export default class {
                 }
 
                 if (collisionRightBorder(this)) { this.speed.x *= -1; /*this.pos.x=width-this.radius; return true;*/ }
-                if (!angle) collision = collision || this.updateCollisionBrickX()
+                if (!angle) collision = collision || this.updateCollisionBrickRight();
                 if (!angle && !collision) angle = angle || this.updateCollisionBrickXY();
 
             }
@@ -85,7 +85,7 @@ export default class {
                 }
 
                 if (collisionLeftBorder(this)) { this.speed.x *= -1; /*this.pos.x=this.radius; return true;*/ }
-                if (!angle) collision = collision || this.updateCollisionBrickX()
+                if (!angle) collision = collision || this.updateCollisionBrickLeft()
                 if (!angle && !collision) angle = angle || this.updateCollisionBrickXY();
 
             } else {
@@ -121,7 +121,7 @@ export default class {
 
                     if (collisionBottomBorder(this)) { this.speed.y *= -1; /*this.pos.y=height-this.radius; return true;*/ }
 
-                    if (!angle) collision = collision || this.updateCollisionBrickY()
+                    if (!angle) collision = collision || this.updateCollisionBrickBottom()
                     if (!angle && !collision) angle = angle || this.updateCollisionBrickXY();
 
                     console.log(1);
@@ -140,7 +140,7 @@ export default class {
 
                     if (collisionTopBorder(this)) { this.speed.y *= -1; /*this.pos.y=this.radius; return true;*/ }
 
-                    if (!angle) collision = collision || this.updateCollisionBrickY()
+                    if (!angle) collision = collision || this.updateCollisionBrickTop()
                     if (!angle && !collision) angle = angle || this.updateCollisionBrickXY();
 
                     console.log(2);
@@ -337,156 +337,72 @@ export default class {
           }
     }
 
-    updateCollisionBrick() {
-        var top = false;
-        var bottom = false;
-        var left = false;
-        var right = false;
-        this.game.bricks.forEach(brick => {
-            let topOfBrick = brick.pos.y;
-            let leftSideOfBrick = brick.pos.x;
-            let rightSideOfBrick = brick.pos.x + brick.width;
-            let bottomOfBrick = brick.pos.y + brick.height;
-            switch (collisionBallBrick(this, brick)) {
-                case 5:
-                    if (!left && !top) this.updateCollisionPointInfiniteMass(leftSideOfBrick, topOfBrick);
-                    left = true;
-                    top = true;
-                    brick.hp--;
-                    break;
-                case 6:
-                    if (!right && !top) this.updateCollisionPointInfiniteMass(rightSideOfBrick, topOfBrick);
-                    right = true;
-                    top = true;
-                    brick.hp--;
-                    break;
-                case 7:
-                    if (!left && !bottom) this.updateCollisionPointInfiniteMass(leftSideOfBrick, bottomOfBrick);
-                    left = true;
-                    bottom = true;
-                    brick.hp--;
-                    break;
-                case 8:
-                    if (!right && !bottom) this.updateCollisionPointInfiniteMass(rightSideOfBrick, bottomOfBrick);
-                    right = true;
-                    bottom = true;
-                    brick.hp--;
-                    break;
-                case 1:
-                    //if (top) this.speed.y = 0;
-                    if (!bottom) this.speed.y *= -1;
-                    bottom = true;
-                    //this.pos.y = brick.pos.y - this.radius;
-                    brick.hp--;
-                    break;
-                case 2:
-                    //if (right) this.speed.x = 0;
-                    if (!left) this.speed.x *= -1;
-                    left = true;
-                    //this.pos.x = brick.pos.x - this.radius;
-                    brick.hp--;
-                    break;
-                case 3:
-                    //if (bottom) this.speed.y = 0;
-                    if (!top) this.speed.y *= -1;
-                    top = true;
-                    //this.pos.y = brick.pos.y + brick.height + this.radius;
-                    brick.hp--;
-                    break;
-                case 4:
-                    //if (left) this.speed.x = 0;
-                    if (!right) this.speed.x *= -1;
-                    right = true;
-                    //this.pos.x = brick.pos.x + brick.width + this.radius;
-                    brick.hp--;
-                    break;
-            }
-        });
-    }
+    updateCollisionBrickRight() {
+        var x = Math.floor(this.pos.x + this.radius) + 1 + 1;
+        var y = Math.round(this.pos.y);
 
-    updateCollisionBrickX() {
-        let bottomOfBall = Math.floor(this.pos.y + this.radius) + 1;
-        let topOfBall = Math.floor(this.pos.y - this.radius) - 1;
-        let leftSideOfBall = Math.floor(this.pos.x - this.radius) - 1;
-        let rightSideOfBall = Math.floor(this.pos.x + this.radius) + 1;
-
-
-        var top = false;
-        var bottom = false;
-        var left = false;
-        var right = false;
-
-        for (var x = leftSideOfBall; x < rightSideOfBall; ++x) {
-            for (var y = topOfBall; y < bottomOfBall; ++y) {
-                if (this.game.matrix[x] && this.game.matrix[x][y])
-                    for (var brick of this.game.matrix[x][y]) {
-                        if (brick.hp > 0) {
-                            if (collisionBallBrickLeftBorder(this, brick)) {
-                                //if (right) this.speed.x = 0;
-                                if (!left) this.speed.x *= -1;
-                                left = true;
-                                console.log(2);
-                                //this.pos.x = brick.pos.x - this.radius;
-                                brick.hp--;
-                                return;
-                            }
-
-                            if (collisionBallBrickRightBorder(this, brick)) {
-                                //if (left) this.speed.x = 0;
-                                console.log(4);
-
-                                if (!right) this.speed.x *= -1;
-                                right = true;
-                                //this.pos.x = brick.pos.x + brick.width + this.radius;
-                                brick.hp--;
-                                return;
-                            }
-                        }
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickRightBorder(this, brick)) {
+                    this.speed.x *= -1;
+                    brick.hp--;
+                    return true;
                 }
             }
         }
 
-        return left || right || bottom || top;
+        return false;
     }
 
+    updateCollisionBrickLeft() {
+        var x = Math.floor(this.pos.x - this.radius) - 1 - 1;
+        var y = Math.round(this.pos.y);
 
-    updateCollisionBrickY() {
-        let bottomOfBall = Math.floor(this.pos.y + this.radius) + 1;
-        let topOfBall = Math.floor(this.pos.y - this.radius);
-        let leftSideOfBall = Math.floor(this.pos.x - this.radius);
-        let rightSideOfBall = Math.floor(this.pos.x + this.radius) + 1;
-
-        var top = false;
-        var bottom = false;
-        var left = false;
-        var right = false;
-
-        for (var x = leftSideOfBall; x < rightSideOfBall; ++x) {
-            for (var y = topOfBall; y < bottomOfBall; ++y) {
-                if (this.game.matrix[x] && this.game.matrix[x][y])
-                    for (var brick of this.game.matrix[x][y]) {
-                        if (brick.hp > 0)
-                            switch (collisionBallBrick(this, brick)) {
-                                case 1:
-                                    //if (top) this.speed.y = 0;
-                                    if (!bottom) this.speed.y *= -1;
-                                    bottom = true;
-                                    //this.pos.y = brick.pos.y - this.radius;
-                                    brick.hp--;
-                                    return;
-                                case 3:
-                                    //if (bottom) this.speed.y = 0;
-                                    if (!top) this.speed.y *= -1;
-                                    top = true;
-                                    //this.pos.y = brick.pos.y + brick.height + this.radius;
-                                    brick.hp--;
-                                    return;
-                            }
-                    }
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickLeftBorder(this, brick)) {
+                    this.speed.x *= -1;
+                    brick.hp--;
+                    return true;
+                }
             }
         }
 
-        return left || right || bottom || top;
+        return false;
+    }
+
+    updateCollisionBrickTop() {
+        var x = Math.round(this.pos.x);
+        var y = Math.floor(this.pos.y - this.radius) - 1 - 1;
+
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickTopBorder(this, brick)) {
+                    this.speed.y *= -1;
+                    brick.hp--;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    updateCollisionBrickBottom() {
+        var x = Math.round(this.pos.x);
+        var y = Math.floor(this.pos.y + this.radius) + 1 + 1;
+
+        if (this.game.matrix[x] && this.game.matrix[x][y]) {
+            for (var brick of this.game.matrix[x][y]) {
+                if (brick.hp > 0 && collisionBallBrickBottomBorder(this, brick)) {
+                    this.speed.y *= -1;
+                    brick.hp--;
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     updateCollisionBrickXY() {
