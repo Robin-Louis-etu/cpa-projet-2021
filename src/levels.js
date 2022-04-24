@@ -7,18 +7,7 @@ export function buildLevel(level) {
 
     level.forEach((row, rowIndex) => {
         row.forEach((brick, brickIndex) => {
-            let position;
-            if (brickIndex === 0) {
-                if (rowIndex === 0) {
-                    position = new Position(1, 24);
-                } else {
-                    position = new Position(1, 24 + BRICK_HEIGHT * rowIndex + rowIndex);
-                }
-            } else if (rowIndex === 0) {
-                position = new Position(BRICK_WIDTH * brickIndex + brickIndex, 24);
-            } else {
-                position = new Position(BRICK_WIDTH * brickIndex + brickIndex, 24 + BRICK_HEIGHT * rowIndex +  rowIndex);
-            }
+            let position = new Position(BRICK_WIDTH * brickIndex, 24 + BRICK_HEIGHT * rowIndex);
             switch (brick) {
                 case 1:
                     bricks.push(new Brick(position, 1, 0));
