@@ -31,8 +31,8 @@ document.addEventListener("mousemove", event => {
         // Pour tester les collisions :
         game.ball.pos.x = event.clientX - game.ball.radius;
         game.ball.pos.y = event.clientY - game.ball.radius;
-        game.ball.speed.x = 0.;
-        game.ball.speed.y = 0.5;
+        game.ball.speed.x = 5;
+        game.ball.speed.y = 0.;
     }
     else {
         if (game.gamestate === GAMESTATE.RUNNING) {
