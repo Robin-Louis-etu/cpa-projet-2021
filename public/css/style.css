@@ -4,6 +4,11 @@
 
 #main_div {
     display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+#health_points {
+    font-size: 30px;
 }
 
 #main_window {

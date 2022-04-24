@@ -1,7 +1,7 @@
 import { buildLevel, level1, level2 } from "./levels.js";
 import Ball from "./ball.js";
 import Paddle from "./paddle.js";
-import { BALL_LIFE, BALL_RADIUS } from "./conf.js";
+import { PLAYER_LIFE, BALL_RADIUS } from "./conf.js";
 
 var width = main_window.width;
 var height = main_window.height;
@@ -21,6 +21,7 @@ export default class {
         this.bricks = [];
         this.levels = [level1, level2];
         this.currentLevel = 0;
+        this.life = PLAYER_LIFE;
 
         this.matrix = new Array(width);
 
@@ -35,7 +36,7 @@ export default class {
 
     start() {
         this.bricks = buildLevel(this.levels[this.currentLevel]);
-        this.balls = [new Ball(BALL_RADIUS, "red", "#FF2400", BALL_LIFE, this)];
+        this.balls = [new Ball(BALL_RADIUS, "red", "#FF2400", this)];
         this.bricks.forEach(brick => {
             for (var x = brick.pos.x; x < brick.pos.x + brick.width; ++x) {
                 for (var y = brick.pos.y; y < brick.pos.y + brick.height; ++y) {
@@ -56,29 +57,38 @@ export default class {
     }
 
     update() {
-        if (this.gamestate === GAMESTATE.PAUSED || this.gamestate === GAMESTATE.GAMEOVER || this.gamestate === GAMESTATE.YOUWIN)
-             return;
-    
-        if (this.bricks.length === 0) {
-            this.currentLevel++;
-            if (this.currentLevel > 1) {
-                this.gamestate = GAMESTATE.YOUWIN;
-            } else {
-                this.start();
+        if (this.gamestate === GAMESTATE.RUNNING) {
+            [...this.balls, this.paddle].forEach(object => object.update());
+
+            this.balls = this.balls.filter(ball => !ball.lost);
+            this.bricks = this.bricks.filter(brick => brick.hp > 0);
+
+            if (this.balls.length === 0) {
+                this.life--;
+                if (this.life > 0) {
+                    this.balls = [new Ball(BALL_RADIUS, "red", "#FF2400", this)];
+                } else {
+                    this.gamestate = GAMESTATE.GAMEOVER;
+                }
+            }
+            
+            if (this.bricks.length === 0) {
+                this.currentLevel++;
+                if (this.currentLevel > 1) {
+                    this.gamestate = GAMESTATE.YOUWIN;
+                } else {
+                    this.start();
+                }
             }
         }
-        
-        [...this.balls, this.paddle].forEach(object => object.update());
-        
-        this.bricks = this.bricks.filter(brick => brick.hp > 0);
-        this.balls = this.balls.filter(ball => ball.life > 0);
-
-        if (!this.balls.length) this.gamestate = GAMESTATE.GAMEOVER;
     }
 
     draw(ctx) {
+        const hp = document.querySelector("#health_points");
+        hp.innerHTML = `Lifes : ${this.life}`;
+
         [...this.balls, this.paddle, ...this.bricks].forEach(object => object.draw(ctx));
-    
+
         if (this.gamestate === GAMESTATE.PAUSED) {
         ctx.rect(0, 0, width, height);
         ctx.fillStyle = "rgba(0,0,0,0.5)";

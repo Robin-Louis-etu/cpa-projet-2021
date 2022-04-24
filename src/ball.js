@@ -22,19 +22,15 @@ document.getElementById("P").oninput = e => {
 }
 
 export default class {
-    constructor(r, c, bc, l, game) {
+    constructor(r, c, bc, game) {
 	    this.radius = r;
         this.color = c;
         this.bordercolor = bc;
-        this.life = l;
         this.game = game; 
-        this.reset();
-    }
-
-    reset() {
         this.pos = new Position(this.game.paddle.pos.x + this.game.paddle.width/2, this.game.paddle.pos.y - BALL_RADIUS);
         this.speed = new Position(0, 0);
         this.state = 0;
+        this.lost = false;
     }
 
     draw(ctx) {
@@ -131,8 +127,7 @@ export default class {
                     }
 
                     if (collisionBottomBorder(this)) {
-                        this.life--;
-                        this.reset();
+                        this.lost = true;
                     }
                     else {
                         if (!this.updateCollisionBrickBottom()) {
@@ -189,8 +184,7 @@ export default class {
         if (collisionRightBorder(this)){ this.speed.x*=-1; this.pos.x=width-this.radius; }
         if (collisionTopBorder(this)){ this.speed.y*=-1; this.pos.y=this.radius; }
         if (collisionBottomBorder(this)){
-            this.reset();
-            this.life--;
+            this.lost = true;
         }
     }
 
@@ -424,7 +418,7 @@ export default class {
 
     updateBrick(brick) {
         if (brick.power === 1) {
-            let ball = new this.constructor(BALL_RADIUS, "red", "#FF2400", 1, this.game);
+            let ball = new this.constructor(BALL_RADIUS, "red", "#FF2400", this.game);
             this.game.balls.push(ball);
             ball.go(); 
         }
