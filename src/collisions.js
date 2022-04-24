@@ -18,6 +18,10 @@ export function collisionBalls(b1, b2){
     return Math.pow(b1.pos.x-b2.pos.x,2)+Math.pow(b1.pos.y-b2.pos.y,2) <= Math.pow(b1.radius + b2.radius,2);
 }
 
+export function collisionBallPoint(b1, x, y) {
+    return Math.pow(b1.pos.x - x, 2) + Math.pow(b1.pos.y - y, 2) < Math.pow(b1.radius, 2);
+}
+
 export function collisionBallPaddle(ball, paddle) {
     let hitPosition = 0;
     let tmp = paddle.width / 6;
@@ -151,7 +155,3 @@ export function collisionBallBrickAngle(ball, brick) {
     return 0;
 }
 
-// ---- Utils ----
-function collisionBallPoint(b1, x, y) {
-    return Math.pow(Math.floor(b1.pos.x) - x, 2) + Math.pow(Math.floor(b1.pos.y) - y, 2) <= Math.pow(b1.radius, 2);
-}
