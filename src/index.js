@@ -55,8 +55,8 @@ document.addEventListener("mousemove", event => {
     }
 });
 
-document.addEventListener("mousedown", () => {
-    mouseControl = !mouseControl;
+document.addEventListener("mousedown", e => {
+    if (e.button === 1) mouseControl = !mouseControl;
 });
 
 // ------------------------------
