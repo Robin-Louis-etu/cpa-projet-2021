@@ -169,6 +169,7 @@ export default class {
             }
 
             c = !c;
+            //this.speed.y += G;
         } while (vx > 0 || vy > 0)
 
         this.updateCollisionSameMass();
@@ -177,6 +178,7 @@ export default class {
         this.speed.y *= F;
         this.speed.y += G;
         this.speed.x *= F;
+        console.log("vy: " + this.speed.y)
     }
 
     updatePosition() {
@@ -204,8 +206,8 @@ export default class {
                 var y2=ball.pos.y;
                 var r2=ball.radius;
                 var d=Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-                var nx = (x2 - x1)/(r1+r2);
-                var ny = (y2 - y1)/(r1+r2);
+                var nx = (x2 - x1) / (d);
+                var ny = (y2 - y1) / (d);
                 var gx = -ny;
                 var gy = nx;
                 var v1n = nx*this.speed.x + ny*this.speed.y;
@@ -217,8 +219,8 @@ export default class {
                 ball.speed.x = nx*v1n +  gx*v2g;
                 ball.speed.y = ny*v1n +  gy*v2g;
            
-                ball.pos.x = x1 + (r1+r2)*(x2-x1)/d;
-                ball.pos.y = y1 + (r1+r2)*(y2-y1)/d;
+                ball.pos.x = x1 + (d)*(x2-x1)/d;
+                ball.pos.y = y1 + (d)*(y2-y1)/d;
               }
         });
     }
@@ -254,12 +256,16 @@ export default class {
         this.speed.x -= 2 * (vx * (x2 - x1) * (x2 - x1) + vy * (y2 - y1) * (x2 - x1)) / (r2 * r2);
         this.speed.y -= 2 * (vx * (x2 - x1) * (y2 - y1) + vy * (y2 - y1) * (y2 - y1)) / (r2 * r2);
 
+        this.pos.x = x1 + (this.radius) * (x2-x1) / r2;
+        this.pos.y = y1 + (this.radius) * (y2-y1) / r2;
+
+
         console.log(vx * vx + vy * vy - this.speed.x * this.speed.x - this.speed.y * this.speed.y);
 
-        //if (this.speed.x > 0) this.pos.x += 2;
-        //if (this.speed.x < 0) this.pos.x -= 2;
-        //if (this.speed.y > 0) this.pos.y += 2;
-        //if (this.speed.y < 0) this.pos.y -= 2;
+        if (this.speed.x > 0) this.pos.x += 1;
+        if (this.speed.x < 0) this.pos.x -= 1;
+        if (this.speed.y > 0) this.pos.y += 1;
+        if (this.speed.y < 0) this.pos.y -= 1;
 
         console.log("ANGLE");
 
@@ -274,7 +280,7 @@ export default class {
                 this.speed.x = -9;
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+               this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 2:
@@ -285,13 +291,13 @@ export default class {
                 }
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 3:
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 4:
@@ -302,13 +308,13 @@ export default class {
                 }
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 5:
                 this.speed.x = 9;
                 this.speed.y *= -1;
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
         }
@@ -372,6 +378,8 @@ export default class {
         if (this.game.matrix[x] && this.game.matrix[x][y]) {
             for (var brick of this.game.matrix[x][y]) {
                 if (brick.hp > 0 && collisionBallBrickBottomBorder(this, brick)) {
+                    console.log(this.game.matrix[x][y].length)
+
                     this.speed.y *= -1;
                     this.updateBrick(brick);
                     return true;
