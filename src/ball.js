@@ -197,7 +197,7 @@ export default class {
                 var x2=ball.pos.x;
                 var y2=ball.pos.y;
                 var r2=ball.radius;
-                var d=Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+                // var d=Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
                 var nx = (x2 - x1)/(r1+r2);
                 var ny = (y2 - y1)/(r1+r2);
                 var gx = -ny;
@@ -210,9 +210,12 @@ export default class {
                 this.speed.y = ny*v2n +  gy*v1g;
                 ball.speed.x = nx*v1n +  gx*v2g;
                 ball.speed.y = ny*v1n +  gy*v2g;
-           
-                ball.pos.x = x1 + (r1+r2)*(x2-x1)/d;
-                ball.pos.y = y1 + (r1+r2)*(y2-y1)/d;
+                this.pos.x += this.speed.x;
+                this.pos.y += this.speed.y;
+                ball.pos.x += ball.speed.x;
+                ball.pos.y += ball.speed.y;
+                // ball.pos.x = x1 + (r1+r2)*(x2-x1)/d;
+                // ball.pos.y = y1 + (r1+r2)*(y2-y1)/d;
               }
         });
     }
