@@ -174,20 +174,6 @@ export default class {
         this.speed.x *= F;
     }
 
-    updatePosition() {
-        this.pos.x += this.speed.x; 
-        this.pos.y += this.speed.y;
-    }
-
-    updateCollisionBorder(){ 
-        if (collisionLeftBorder(this)){ this.speed.x*=-1; this.pos.x=this.radius; }
-        if (collisionRightBorder(this)){ this.speed.x*=-1; this.pos.x=width-this.radius; }
-        if (collisionTopBorder(this)){ this.speed.y*=-1; this.pos.y=this.radius; }
-        if (collisionBottomBorder(this)){
-            this.lost = true;
-        }
-    }
-
     updateCollisionSameMass() {
         this.game.balls.forEach(ball => {
             if(this !== ball && collisionBalls(this, ball)){
@@ -217,24 +203,6 @@ export default class {
         });
     }
 
-    // updateCollisionInfiniteMass(object) {
-    //     var x1=object.x;
-    //     var y1=object.y;
-    //     var r1=0;
-    //     var x2=this.pos.x;
-    //     var y2=this.pos.y;
-    //     var r2=this.radius;
-    //     var d=Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2));
-    //     var nx = (x2-x1)/(r1+r2);
-    //     var ny = (y2-y1)/(r1+r2);
-    //     var pthis = this.speed.x * nx + this.speed.y * ny;
-    //     this.speed.x = - 2 * pthis * nx;
-    //     this.speed.y = - 2 * pthis * ny;
-    
-    //     this.pos.x = x1 + (r1+r2) * (x2-x1) / d;
-    //     this.pos.y = y1 + (r1+r2) * (y2-y1) / d;
-    // }
-
     updateCollisionPointInfiniteMass(x, y) {
         var x1 = x;
         var y1 = y;
@@ -248,17 +216,13 @@ export default class {
         this.speed.x -= 2 * (vx * (x2 - x1) * (x2 - x1) + vy * (y2 - y1) * (x2 - x1)) / (r2 * r2);
         this.speed.y -= 2 * (vx * (x2 - x1) * (y2 - y1) + vy * (y2 - y1) * (y2 - y1)) / (r2 * r2);
 
-        console.log(vx * vx + vy * vy - this.speed.x * this.speed.x - this.speed.y * this.speed.y);
+        this.pos.x = x1 + (this.radius) * (x2-x1) / r2;
+        this.pos.y = y1 + (this.radius) * (y2-y1) / r2;
 
-        //if (this.speed.x > 0) this.pos.x += 2;
-        //if (this.speed.x < 0) this.pos.x -= 2;
-        //if (this.speed.y > 0) this.pos.y += 2;
-        //if (this.speed.y < 0) this.pos.y -= 2;
-
-        console.log("ANGLE");
-
-
-        return true;
+        if (this.speed.x > 0) this.pos.x += 1;
+        if (this.speed.x < 0) this.pos.x -= 1;
+        if (this.speed.y > 0) this.pos.y += 1;
+        if (this.speed.y < 0) this.pos.y -= 1;
     }
 
 
@@ -268,7 +232,7 @@ export default class {
                 this.speed.x = -9;
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+               this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 2:
@@ -279,13 +243,13 @@ export default class {
                 }
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 3:
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 4:
@@ -296,13 +260,13 @@ export default class {
                 }
                 this.speed.y *= -1;
 
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
             case 5:
                 this.speed.x = 9;
                 this.speed.y *= -1;
-                if (Math.abs(this.speed.y) < 5) this.speed.y *= P;
+                this.speed.y *= P;
                 this.pos.y = this.game.paddle.pos.y - this.radius;
                 break;
         }
@@ -366,6 +330,8 @@ export default class {
         if (this.game.matrix[x] && this.game.matrix[x][y]) {
             for (var brick of this.game.matrix[x][y]) {
                 if (brick.hp > 0 && collisionBallBrickBottomBorder(this, brick)) {
+                    console.log(this.game.matrix[x][y].length)
+
                     this.speed.y *= -1;
                     this.updateBrick(brick);
                     return true;
