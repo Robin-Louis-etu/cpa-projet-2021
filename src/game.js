@@ -26,7 +26,7 @@ export default class {
 
         for (var x = 0; x < width; ++x) {
             this.matrix[x] = new Array(height);
-            for (var y = 0; y < height; ++y) {
+            for (var y = 0; y < height; ++y) { 
                 this.matrix[x][y] = [];
             }
         }
