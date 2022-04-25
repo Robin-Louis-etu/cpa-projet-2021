@@ -21,6 +21,24 @@ document.getElementById("P").oninput = e => {
     P = parseFloat(e.target.value);
 }
 
+
+document.addEventListener("wheel", event => {
+    if (event.deltaY < 0) {
+        P += 0.1;
+    }
+    else {
+        P -= 0.1;
+    }
+    document.getElementById("P").value = P;
+});
+
+document.addEventListener("mousedown", event => {
+    if (event.button == 1) {
+        P = 1;
+        document.getElementById("P").value = P;
+    }
+});
+
 export default class {
     constructor(r, c, bc, game) {
 	    this.radius = r;
