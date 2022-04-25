@@ -3,8 +3,6 @@ import Position from "./position.js";
 import { GAMESTATE } from "./game.js";
 import { BALL_RADIUS } from "./conf.js";
 
-var width = main_window.width;
-
 var G = 0.;
 var F = 1;
 var P = 1.;
@@ -40,12 +38,12 @@ document.addEventListener("mousedown", event => {
 });
 
 export default class {
-    constructor(r, c, bc, game) {
+    constructor(p, r, c, bc, game) {
 	    this.radius = r;
         this.color = c;
         this.bordercolor = bc;
         this.game = game; 
-        this.pos = new Position(this.game.paddle.pos.x + this.game.paddle.width/2, this.game.paddle.pos.y - BALL_RADIUS);
+        this.pos = p;
         this.speed = new Position(0, 0);
         this.state = 0;
         this.lost = false;
@@ -350,8 +348,6 @@ export default class {
         if (this.game.matrix[x] && this.game.matrix[x][y]) {
             for (var brick of this.game.matrix[x][y]) {
                 if (brick.hp > 0 && collisionBallBrickBottomBorder(this, brick)) {
-                    console.log(this.game.matrix[x][y].length)
-
                     this.speed.y *= -1;
                     this.updateBrick(brick);
                     return true;
@@ -404,7 +400,7 @@ export default class {
 
     updateBrick(brick) {
         if (brick.power === 1) {
-            let ball = new this.constructor(BALL_RADIUS, "red", "#FF2400", this.game);
+            let ball = new this.constructor(new Position(BALL_RADIUS, this.game.paddle.pos.y - 20), BALL_RADIUS, "red", "#FF2400", this.game);
             this.game.balls.push(ball);
             ball.go(); 
         }

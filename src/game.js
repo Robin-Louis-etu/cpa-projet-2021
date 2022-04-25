@@ -2,6 +2,7 @@ import { buildLevel, level1, level2 } from "./levels.js";
 import Ball from "./ball.js";
 import Paddle from "./paddle.js";
 import { PLAYER_LIFE, BALL_RADIUS } from "./conf.js";
+import Position from "./position.js";
 
 var width = main_window.width;
 var height = main_window.height;
@@ -19,7 +20,7 @@ export default class {
         this.paddle = new Paddle();
         this.balls = [];
         this.bricks = [];
-        this.levels = [level1, level2];
+        this.levels = [level2, level1];
         this.currentLevel = 0;
         this.life = PLAYER_LIFE;
     }
@@ -35,7 +36,7 @@ export default class {
         }
 
         this.bricks = buildLevel(this.levels[this.currentLevel]);
-        this.balls = [new Ball(BALL_RADIUS, "red", "#FF2400", this)];
+        this.balls = [new Ball(new Position(this.paddle.pos.x + this.paddle.width/2, this.paddle.pos.y - BALL_RADIUS), BALL_RADIUS, "red", "#FF2400", this)];
         
         this.bricks.forEach(brick => {
             for (var i = brick.pos.x; i < brick.pos.x + brick.width; ++i) {
@@ -47,7 +48,7 @@ export default class {
     }
 
     reset() {
-        if (this.gamestate === GAMESTATE.GAMEOVER || this.gamestate === GAMESTATE.YOUWIN) {    
+        if (this.gamestate === GAMESTATE.GAMEOVER || this.gamestate === GAMESTATE.YOUWIN || this.gamestate === GAMESTATE.PAUSED) {    
             this.gamestate = GAMESTATE.RUNNING;
             this.paddle.reset();
             this.currentLevel = 0;
@@ -67,7 +68,7 @@ export default class {
             if (this.balls.length === 0) {
                 this.life--;
                 if (this.life > 0) {
-                    this.balls = [new Ball(BALL_RADIUS, "red", "#FF2400", this)];
+                    this.balls = [new Ball(new Position(this.paddle.pos.x + this.paddle.width/2, this.paddle.pos.y - BALL_RADIUS), BALL_RADIUS, "red", "#FF2400", this)];
                 } else {
                     this.gamestate = GAMESTATE.GAMEOVER;
                 }
@@ -99,6 +100,14 @@ export default class {
         ctx.fillStyle = "black";
         ctx.textAlign = "center";
         ctx.fillText("Paused", width / 2, height / 2);
+        ctx.font = "15px Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText("(Press escape to continue)", width / 2, height / 2 + 30);
+        ctx.font = "15px Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText("(Press enter to restart)", width / 2, height / 2 + 60);
         }
     
         if (this.gamestate === GAMESTATE.GAMEOVER) {
