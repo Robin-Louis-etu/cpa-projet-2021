@@ -167,7 +167,6 @@ export default class {
             }
 
             c = !c;
-            //this.speed.y += G;
         } while (vx > 0 || vy > 0)
 
         this.updateCollisionSameMass();
@@ -175,21 +174,6 @@ export default class {
         this.speed.y *= F;
         this.speed.y += G;
         this.speed.x *= F;
-        console.log("vy: " + this.speed.y)
-    }
-
-    updatePosition() {
-        this.pos.x += this.speed.x; 
-        this.pos.y += this.speed.y;
-    }
-
-    updateCollisionBorder(){ 
-        if (collisionLeftBorder(this)){ this.speed.x*=-1; this.pos.x=this.radius; }
-        if (collisionRightBorder(this)){ this.speed.x*=-1; this.pos.x=width-this.radius; }
-        if (collisionTopBorder(this)){ this.speed.y*=-1; this.pos.y=this.radius; }
-        if (collisionBottomBorder(this)){
-            this.lost = true;
-        }
     }
 
     updateCollisionSameMass() {
@@ -201,9 +185,8 @@ export default class {
                 var x2=ball.pos.x;
                 var y2=ball.pos.y;
                 var r2=ball.radius;
-                var d=Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-                var nx = (x2 - x1) / (d);
-                var ny = (y2 - y1) / (d);
+                var nx = (x2 - x1)/(r1+r2);
+                var ny = (y2 - y1)/(r1+r2);
                 var gx = -ny;
                 var gy = nx;
                 var v1n = nx*this.speed.x + ny*this.speed.y;
@@ -214,30 +197,13 @@ export default class {
                 this.speed.y = ny*v2n +  gy*v1g;
                 ball.speed.x = nx*v1n +  gx*v2g;
                 ball.speed.y = ny*v1n +  gy*v2g;
-           
-                ball.pos.x = x1 + (d)*(x2-x1)/d;
-                ball.pos.y = y1 + (d)*(y2-y1)/d;
+                this.pos.x += this.speed.x;
+                this.pos.y += this.speed.y;
+                ball.pos.x += ball.speed.x;
+                ball.pos.y += ball.speed.y;
               }
         });
     }
-
-    // updateCollisionInfiniteMass(object) {
-    //     var x1=object.x;
-    //     var y1=object.y;
-    //     var r1=0;
-    //     var x2=this.pos.x;
-    //     var y2=this.pos.y;
-    //     var r2=this.radius;
-    //     var d=Math.sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2));
-    //     var nx = (x2-x1)/(r1+r2);
-    //     var ny = (y2-y1)/(r1+r2);
-    //     var pthis = this.speed.x * nx + this.speed.y * ny;
-    //     this.speed.x = - 2 * pthis * nx;
-    //     this.speed.y = - 2 * pthis * ny;
-    
-    //     this.pos.x = x1 + (r1+r2) * (x2-x1) / d;
-    //     this.pos.y = y1 + (r1+r2) * (y2-y1) / d;
-    // }
 
     updateCollisionPointInfiniteMass(x, y) {
         var x1 = x;
@@ -255,18 +221,10 @@ export default class {
         this.pos.x = x1 + (this.radius) * (x2-x1) / r2;
         this.pos.y = y1 + (this.radius) * (y2-y1) / r2;
 
-
-        console.log(vx * vx + vy * vy - this.speed.x * this.speed.x - this.speed.y * this.speed.y);
-
         if (this.speed.x > 0) this.pos.x += 1;
         if (this.speed.x < 0) this.pos.x -= 1;
         if (this.speed.y > 0) this.pos.y += 1;
         if (this.speed.y < 0) this.pos.y -= 1;
-
-        console.log("ANGLE");
-
-
-        return true;
     }
 
 

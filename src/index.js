@@ -7,6 +7,8 @@ var height = main_window.height;
 var game = new Game();
 
 // ------ INPUT CONFIGURATION ------
+var mouseControl = false;
+
 document.addEventListener("keydown", event => {
     switch (event.keyCode) {
         case 32: // touche espace pour lancer la balle
@@ -20,24 +22,22 @@ document.addEventListener("keydown", event => {
         case 27: // touche echap pour faire pause ou reprendre la partie
             game.togglePause();
             break;
+        case 17: // touche ctrl gauche pour controle la balle avec la souris
+            mouseControl = !mouseControl;
+            break;
     }
 });
 
-var mouseControl = false;
-
 document.addEventListener("mousemove", event => {
-    if (mouseControl) {
-        if (game.gamestate === GAMESTATE.RUNNING) {
+    if (game.gamestate === GAMESTATE.RUNNING) {
+        var relativeX = event.clientX - main_window.offsetLeft;
+        var relativeY = event.clientY - main_window.offsetTop; 
+        if (mouseControl && game.balls[0].state === 1) {
             // Pour tester les collisions :
-            game.balls[0].pos.x = event.clientX - game.balls[0].radius;
-            game.balls[0].pos.y = event.clientY - game.balls[0].radius;
-            game.balls[0].speed.x = 5;
-            game.balls[0].speed.y = 0;
+            game.balls[0].pos.x = relativeX - game.balls[0].radius;
+            game.balls[0].pos.y = relativeY;
         }
-    }
-    else {
-        if (game.gamestate === GAMESTATE.RUNNING) {
-            var relativeX = event.clientX - main_window.offsetLeft;
+        else {
             if (relativeX > 0 && relativeX < width) {
                 game.paddle.pos.x = relativeX - game.paddle.width / 2;
                 if (game.paddle.pos.x < 0) {
@@ -47,18 +47,11 @@ document.addEventListener("mousemove", event => {
                 }
                 if (game.balls[0].state === 0) {
                     game.balls[0].pos.x = game.paddle.pos.x + game.paddle.width / 2;
-                    console.log(`Balle : x = ${game.balls[0].pos.x} y : ${game.balls[0].pos.y}`);
-                    console.log(`Paddle : x = ${game.paddle.pos.x} y = ${game.paddle.pos.y}`);
                 }
             }
         }
     }
 });
-
-document.addEventListener("mousedown", e => {
-    if (e.button === 1) mouseControl = !mouseControl;
-});
-
 
 // ------ SLIDERS VALUE DISPLAY ------
 const allRanges = document.querySelectorAll(".range-wrap");
