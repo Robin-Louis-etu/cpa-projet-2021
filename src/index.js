@@ -22,7 +22,7 @@ document.addEventListener("keydown", event => {
         case 27: // touche echap pour faire pause ou reprendre la partie
             game.togglePause();
             break;
-        case 17: // touche ctrl gauche pour controle la balle avec la souris
+        case 17: // touche ctrl gauche pour controler la balle avec la souris
             mouseControl = !mouseControl;
             break;
     }
