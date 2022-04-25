@@ -86,7 +86,7 @@ export default class {
 
     draw(ctx) {
         const hp = document.querySelector("#health_points");
-        hp.innerHTML = `Lifes : ${this.life}`;
+        hp.innerHTML = `Lives : ${this.life}`;
 
         [...this.balls, this.paddle, ...this.bricks].forEach(object => object.draw(ctx));
 
