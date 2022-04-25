@@ -63,7 +63,7 @@ export default class {
         let c = true;
 
         do {
-            if (c) {
+            if (c && vx > 0) {
                 if (this.pos.x + this.speed.x >= x + 1) {
                     if (this.speed.x < 1) {
                         vx = 0;
@@ -113,7 +113,7 @@ export default class {
                     if (!angle) angle = angle || this.updateCollisionBrickAngle();
                 }
             }
-            else {
+            if (!c && vy > 0) {
                 if (this.pos.y + this.speed.y >= y + 1) {
                     if (this.speed.y < 1) {
                         vy = 0;
@@ -134,6 +134,9 @@ export default class {
                             if (!angle) angle = angle || this.updateCollisionBrickAngle();
                         }
                     }
+
+                    this.updateCollisionPaddle();
+
                 }
                 else if (this.pos.y + this.speed.y < y) {
                     if (this.speed.y > -1) {
@@ -168,7 +171,6 @@ export default class {
         } while (vx > 0 || vy > 0)
 
         this.updateCollisionSameMass();
-        this.updateCollisionPaddle();
 
         this.speed.y *= F;
         this.speed.y += G;
